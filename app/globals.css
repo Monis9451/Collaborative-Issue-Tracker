@@ -1,26 +1,500 @@
 @import "tailwindcss";
 
+/* ================================================================
+   DESIGN TOKENS — Jira-inspired palette (Atlassian Design System)
+   Strategy: CSS custom properties on :root change under .dark class.
+   Tailwind @theme inline maps those vars to utility classes.
+   ================================================================ */
+
+/* ── Light mode (default) ──────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page & surface backgrounds */
+  --bg-base:           #F7F8F9;   /* page canvas — Jira's lightest grey */
+  --bg-surface:        #FFFFFF;   /* cards, panels, modals */
+  --bg-sunken:         #F1F2F4;   /* input backgrounds, inset sections */
+  --bg-raised:         #FFFFFF;   /* dropdowns, popovers */
+  --bg-overlay:        rgba(9, 30, 66, 0.54);  /* modal backdrop */
+
+  /* Sidebar — always dark navy in Jira (light + dark modes) */
+  --sidebar-bg:        #0C2340;
+  --sidebar-text:      #B6C2CF;
+  --sidebar-text-hover:#FFFFFF;
+  --sidebar-active-bg: rgba(29, 122, 252, 0.18);
+  --sidebar-active-text:#4C9AFF;
+  --sidebar-border:    #1C3A5E;
+  --sidebar-icon:      #8C9BAB;
+
+  /* Typography */
+  --text-primary:      #172B4D;   /* headings, body */
+  --text-secondary:    #44546F;   /* labels, subtext */
+  --text-subtle:       #626F86;   /* placeholders, hints */
+  --text-disabled:     #8590A2;
+  --text-inverse:      #FFFFFF;   /* text on dark/brand bg */
+  --text-link:         #0C66E4;
+  --text-link-hover:   #0052CC;
+  --text-danger:       #AE2A19;
+
+  /* Borders */
+  --border-default:    #B3BAC5;
+  --border-subtle:     #DCDFE4;
+  --border-input:      #8590A2;
+  --border-focus:      #1D7AFC;
+  --border-danger:     #E34935;
+
+  /* Brand blue scale — Jira primary */
+  --brand-50:          #E9F2FF;
+  --brand-100:         #CCE0FF;
+  --brand-200:         #85B8FF;
+  --brand-300:         #579DFF;
+  --brand-400:         #388BFF;
+  --brand-500:         #1D7AFC;
+  --brand-600:         #0C66E4;
+  --brand-700:         #0052CC;   /* Jira's primary action blue */
+  --brand-800:         #0747A6;
+  --brand-900:         #09326C;
+
+  /* Interactive / button states */
+  --btn-primary-bg:    #0052CC;
+  --btn-primary-hover: #0747A6;
+  --btn-primary-text:  #FFFFFF;
+  --btn-subtle-bg:     transparent;
+  --btn-subtle-hover:  #F1F2F4;
+  --btn-danger-bg:     #AE2A19;
+  --btn-danger-hover:  #C9372C;
+  --btn-danger-text:   #FFFFFF;
+
+  /* Status pill colors */
+  --status-open-bg:        #E9F2FF;
+  --status-open-text:      #0052CC;
+  --status-open-border:    #85B8FF;
+  --status-progress-bg:    #FFF7D6;
+  --status-progress-text:  #7F5F01;
+  --status-progress-border:#F5CD47;
+  --status-closed-bg:      #DCFFF1;
+  --status-closed-text:    #216E4E;
+  --status-closed-border:  #7EE2B8;
+
+  /* Priority dot colors */
+  --priority-low:          #22A06B;
+  --priority-medium:       #E2B203;
+  --priority-high:         #E34935;
+
+  /* Kanban column backgrounds */
+  --kanban-open-bg:        #F1F2F4;
+  --kanban-progress-bg:    #FFF7D6;
+  --kanban-closed-bg:      #DCFFF1;
+
+  /* Utility */
+  --shadow-sm:   0 1px 2px 0 rgba(9, 30, 66, 0.08);
+  --shadow-md:   0 3px 5px 0 rgba(9, 30, 66, 0.12), 0 0 1px rgba(9, 30, 66, 0.31);
+  --shadow-lg:   0 8px 12px 0 rgba(9, 30, 66, 0.15), 0 0 1px rgba(9, 30, 66, 0.31);
+  --shadow-overlay: 0 20px 32px -8px rgba(9, 30, 66, 0.25);
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Dark mode — class strategy (.dark on <html>) ──────────────── */
+.dark {
+  --bg-base:           #1D2125;
+  --bg-surface:        #22272B;
+  --bg-sunken:         #161A1D;
+  --bg-raised:         #2C333A;
+  --bg-overlay:        rgba(0, 0, 0, 0.64);
+
+  /* Sidebar gets slightly darker in dark mode */
+  --sidebar-bg:        #161A1D;
+  --sidebar-text:      #8C9BAB;
+  --sidebar-text-hover:#B6C2CF;
+  --sidebar-active-bg: rgba(29, 122, 252, 0.20);
+  --sidebar-active-text:#4C9AFF;
+  --sidebar-border:    #2C333A;
+  --sidebar-icon:      #738496;
+
+  --text-primary:      #B6C2CF;
+  --text-secondary:    #8C9BAB;
+  --text-subtle:       #738496;
+  --text-disabled:     #596773;
+  --text-inverse:      #1D2125;
+  --text-link:         #579DFF;
+  --text-link-hover:   #85B8FF;
+  --text-danger:       #FF8F73;
+
+  --border-default:    #3B4856;
+  --border-subtle:     #2C333A;
+  --border-input:      #596773;
+  --border-focus:      #579DFF;
+  --border-danger:     #FF8F73;
+
+  --btn-primary-bg:    #0C66E4;
+  --btn-primary-hover: #1D7AFC;
+  --btn-primary-text:  #FFFFFF;
+  --btn-subtle-bg:     transparent;
+  --btn-subtle-hover:  #2C333A;
+  --btn-danger-bg:     #AE2A19;
+  --btn-danger-hover:  #C9372C;
+  --btn-danger-text:   #FFFFFF;
+
+  --status-open-bg:        #0C2340;
+  --status-open-text:      #85B8FF;
+  --status-open-border:    #1558BC;
+  --status-progress-bg:    #332500;
+  --status-progress-text:  #F5CD47;
+  --status-progress-border:#6B5000;
+  --status-closed-bg:      #1C3329;
+  --status-closed-text:    #7EE2B8;
+  --status-closed-border:  #216E4E;
+
+  --priority-low:          #7EE2B8;
+  --priority-medium:       #F5CD47;
+  --priority-high:         #FF8F73;
+
+  --kanban-open-bg:        #1C2B3E;
+  --kanban-progress-bg:    #332500;
+  --kanban-closed-bg:      #1C3329;
+
+  --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.24);
+  --shadow-md:   0 3px 5px 0 rgba(0, 0, 0, 0.32), 0 0 1px rgba(0, 0, 0, 0.48);
+  --shadow-lg:   0 8px 12px 0 rgba(0, 0, 0, 0.40), 0 0 1px rgba(0, 0, 0, 0.48);
+  --shadow-overlay: 0 20px 32px -8px rgba(0, 0, 0, 0.64);
 }
 
+/* Also respect system preference when no explicit class is set */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --bg-base:           #1D2125;
+    --bg-surface:        #22272B;
+    --bg-sunken:         #161A1D;
+    --bg-raised:         #2C333A;
+    --bg-overlay:        rgba(0, 0, 0, 0.64);
+    --sidebar-bg:        #161A1D;
+    --sidebar-text:      #8C9BAB;
+    --sidebar-text-hover:#B6C2CF;
+    --sidebar-active-bg: rgba(29, 122, 252, 0.20);
+    --sidebar-active-text:#4C9AFF;
+    --sidebar-border:    #2C333A;
+    --sidebar-icon:      #738496;
+    --text-primary:      #B6C2CF;
+    --text-secondary:    #8C9BAB;
+    --text-subtle:       #738496;
+    --text-disabled:     #596773;
+    --text-inverse:      #1D2125;
+    --text-link:         #579DFF;
+    --text-link-hover:   #85B8FF;
+    --text-danger:       #FF8F73;
+    --border-default:    #3B4856;
+    --border-subtle:     #2C333A;
+    --border-input:      #596773;
+    --border-focus:      #579DFF;
+    --border-danger:     #FF8F73;
+    --btn-primary-bg:    #0C66E4;
+    --btn-primary-hover: #1D7AFC;
+    --btn-subtle-bg:     transparent;
+    --btn-subtle-hover:  #2C333A;
+    --status-open-bg:        #0C2340;
+    --status-open-text:      #85B8FF;
+    --status-open-border:    #1558BC;
+    --status-progress-bg:    #332500;
+    --status-progress-text:  #F5CD47;
+    --status-progress-border:#6B5000;
+    --status-closed-bg:      #1C3329;
+    --status-closed-text:    #7EE2B8;
+    --status-closed-border:  #216E4E;
+    --priority-low:          #7EE2B8;
+    --priority-medium:       #F5CD47;
+    --priority-high:         #FF8F73;
+    --kanban-open-bg:        #1C2B3E;
+    --kanban-progress-bg:    #332500;
+    --kanban-closed-bg:      #1C3329;
+    --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    --shadow-md:   0 3px 5px 0 rgba(0, 0, 0, 0.32), 0 0 1px rgba(0, 0, 0, 0.48);
+    --shadow-lg:   0 8px 12px 0 rgba(0, 0, 0, 0.40), 0 0 1px rgba(0, 0, 0, 0.48);
+    --shadow-overlay: 0 20px 32px -8px rgba(0, 0, 0, 0.64);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+/* ================================================================
+   TAILWIND v4 THEME MAPPING
+   Maps CSS custom properties → Tailwind utility classes
+   e.g. --color-bg-surface → bg-bg-surface, text-bg-surface etc.
+   ================================================================ */
+@theme inline {
+  /* Font */
+  --font-sans: var(--font-nunito), 'Nunito', ui-sans-serif, system-ui, sans-serif;
+
+  /* Background semantic tokens */
+  --color-bg-base:     var(--bg-base);
+  --color-bg-surface:  var(--bg-surface);
+  --color-bg-sunken:   var(--bg-sunken);
+  --color-bg-raised:   var(--bg-raised);
+
+  /* Sidebar tokens */
+  --color-sidebar-bg:          var(--sidebar-bg);
+  --color-sidebar-text:        var(--sidebar-text);
+  --color-sidebar-text-hover:  var(--sidebar-text-hover);
+  --color-sidebar-active-bg:   var(--sidebar-active-bg);
+  --color-sidebar-active-text: var(--sidebar-active-text);
+  --color-sidebar-border:      var(--sidebar-border);
+  --color-sidebar-icon:        var(--sidebar-icon);
+
+  /* Text semantic tokens */
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-subtle:    var(--text-subtle);
+  --color-text-disabled:  var(--text-disabled);
+  --color-text-inverse:   var(--text-inverse);
+  --color-text-link:      var(--text-link);
+  --color-text-danger:    var(--text-danger);
+
+  /* Border tokens */
+  --color-border-default: var(--border-default);
+  --color-border-subtle:  var(--border-subtle);
+  --color-border-input:   var(--border-input);
+  --color-border-focus:   var(--border-focus);
+  --color-border-danger:  var(--border-danger);
+
+  /* Brand blue scale (static — same in light + dark) */
+  --color-brand-50:  #E9F2FF;
+  --color-brand-100: #CCE0FF;
+  --color-brand-200: #85B8FF;
+  --color-brand-300: #579DFF;
+  --color-brand-400: #388BFF;
+  --color-brand-500: #1D7AFC;
+  --color-brand-600: #0C66E4;
+  --color-brand-700: #0052CC;
+  --color-brand-800: #0747A6;
+  --color-brand-900: #09326C;
+
+  /* Button tokens */
+  --color-btn-primary-bg:    var(--btn-primary-bg);
+  --color-btn-primary-hover: var(--btn-primary-hover);
+  --color-btn-primary-text:  var(--btn-primary-text);
+  --color-btn-subtle-bg:     var(--btn-subtle-bg);
+  --color-btn-subtle-hover:  var(--btn-subtle-hover);
+  --color-btn-danger-bg:     var(--btn-danger-bg);
+  --color-btn-danger-hover:  var(--btn-danger-hover);
+
+  /* Status pill tokens */
+  --color-status-open-bg:          var(--status-open-bg);
+  --color-status-open-text:        var(--status-open-text);
+  --color-status-open-border:      var(--status-open-border);
+  --color-status-progress-bg:      var(--status-progress-bg);
+  --color-status-progress-text:    var(--status-progress-text);
+  --color-status-progress-border:  var(--status-progress-border);
+  --color-status-closed-bg:        var(--status-closed-bg);
+  --color-status-closed-text:      var(--status-closed-text);
+  --color-status-closed-border:    var(--status-closed-border);
+
+  /* Priority dot tokens */
+  --color-priority-low:    var(--priority-low);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-high:   var(--priority-high);
+
+  /* Kanban column bg tokens */
+  --color-kanban-open:     var(--kanban-open-bg);
+  --color-kanban-progress: var(--kanban-progress-bg);
+  --color-kanban-closed:   var(--kanban-closed-bg);
 }
+
+
+/* ================================================================
+   BASE STYLES
+   ================================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Smooth theme transitions — prevents hard flash when toggling dark mode */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-nunito), 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Typography scale ─────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.125rem; }
+h4 { font-size: 1rem; }
+
+p  { color: var(--text-secondary); }
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover { color: var(--text-link-hover); }
+
+/* ── Focus ring — accessible, Jira-style blue ────────────────── */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 8px; height: 8px; }
+::-webkit-scrollbar-track    { background: var(--bg-sunken); }
+::-webkit-scrollbar-thumb    {
+  background: var(--border-default);
+  border-radius: 4px;
+  border: 2px solid var(--bg-sunken);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+
+/* ── Selection highlight ──────────────────────────────────────── */
+::selection {
+  background: var(--brand-200);
+  color: var(--brand-900);
+}
+.dark ::selection {
+  background: var(--brand-800);
+  color: var(--brand-100);
+}
+
+/* ── Input base reset ─────────────────────────────────────────── */
+input, textarea, select {
+  font-family: inherit;
+  font-size: 14px;
+  background-color: var(--bg-sunken);
+  color: var(--text-primary);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(29, 122, 252, 0.20);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-subtle);
+}
+
+/* ── Utility: shadow tokens as classes ───────────────────────── */
+.shadow-jira-sm  { box-shadow: var(--shadow-sm); }
+.shadow-jira-md  { box-shadow: var(--shadow-md); }
+.shadow-jira-lg  { box-shadow: var(--shadow-lg); }
+.shadow-jira-overlay { box-shadow: var(--shadow-overlay); }
+
+/* ── Kanban board drag ghost ─────────────────────────────────── */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
+}
+
+/* ── Smooth page transitions ─────────────────────────────────── */
+.page-enter {
+  animation: fadeSlideIn 0.18s ease forwards;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================================
+   THREE-BODY LOADER — Jira blue palette
+   Used by <Spinner> and <PageLoader> components.
+   CSS custom properties let the size/speed be overridden per use.
+   ================================================================ */
+.three-body {
+  --uib-size:  35px;
+  --uib-speed: 0.8s;
+  --uib-color: var(--brand-600, #0C66E4);   /* Jira primary blue */
+  position:         relative;
+  display:          inline-block;
+  height:           var(--uib-size);
+  width:            var(--uib-size);
+  animation:        spin78236 calc(var(--uib-speed) * 2.5) infinite linear;
+}
+
+.three-body__dot {
+  position: absolute;
+  height:   100%;
+  width:    30%;
+}
+
+.three-body__dot::after {
+  content:          '';
+  position:         absolute;
+  height:           0%;
+  width:            100%;
+  padding-bottom:   100%;
+  background-color: var(--uib-color);
+  border-radius:    50%;
+}
+
+.three-body__dot:nth-child(1) {
+  bottom:           5%;
+  left:             0;
+  transform:        rotate(60deg);
+  transform-origin: 50% 85%;
+}
+.three-body__dot:nth-child(1)::after {
+  bottom:    0;
+  left:      0;
+  animation: wobble1 var(--uib-speed) infinite ease-in-out;
+  animation-delay: calc(var(--uib-speed) * -0.3);
+}
+
+.three-body__dot:nth-child(2) {
+  bottom:           5%;
+  right:            0;
+  transform:        rotate(-60deg);
+  transform-origin: 50% 85%;
+}
+.three-body__dot:nth-child(2)::after {
+  bottom:    0;
+  left:      0;
+  animation: wobble1 var(--uib-speed) infinite calc(var(--uib-speed) * -0.15) ease-in-out;
+}
+
+.three-body__dot:nth-child(3) {
+  bottom:    -5%;
+  left:      0;
+  transform: translateX(116.666%);
+}
+.three-body__dot:nth-child(3)::after {
+  top:       0;
+  left:      0;
+  animation: wobble2 var(--uib-speed) infinite ease-in-out;
+}
+
+@keyframes spin78236 {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes wobble1 {
+  0%, 100% { transform: translateY(0%)   scale(1);    opacity: 1; }
+  50%       { transform: translateY(-66%) scale(0.65); opacity: 0.8; }
+}
+
+@keyframes wobble2 {
+  0%, 100% { transform: translateY(0%)  scale(1);    opacity: 1; }
+  50%       { transform: translateY(66%) scale(0.65); opacity: 0.8; }
+}
+
+/* Size modifier helpers — apply alongside .three-body */
+.three-body--sm  { --uib-size: 22px; --uib-speed: 0.7s; }
+.three-body--lg  { --uib-size: 52px; --uib-speed: 0.9s; }
+.three-body--xl  { --uib-size: 70px; --uib-speed: 1.0s; }
+
+/* Dark-mode variant: slightly brighter blue so it pops on dark surfaces */
+.dark .three-body { --uib-color: var(--brand-400, #388BFF); }
