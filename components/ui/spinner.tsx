@@ -2,23 +2,6 @@
 
 import { cn } from '@/lib/utils'
 
-/**
- * Three-body orbital spinner — matches the Jira brand blue theme.
- *
- * Animation lives in globals.css (.three-body keyframes).
- * Size is controlled via a modifier class:
- *   sm  → 22px   (button inline loaders)
- *   md  → 35px   (default, card-level loaders)
- *   lg  → 52px   (section loaders)
- *   xl  → 70px   (full-page overlay)
- *
- * Usage:
- *   <Spinner />              — default 35px
- *   <Spinner size="sm" />    — small for inside buttons
- *   <Spinner size="xl" />    — large for page loaders
- *   <Spinner className="..." /> — override positioning
- */
-
 type SpinnerSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface SpinnerProps {

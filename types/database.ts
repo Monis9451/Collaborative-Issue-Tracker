@@ -7,6 +7,7 @@
 export type AppRole       = 'admin' | 'member'
 export type TicketStatus  = 'open'  | 'in_progress' | 'closed'
 export type TicketPriority = 'low'  | 'medium'       | 'high'
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 
 // ── profiles ─────────────────────────────────────────────────
 export interface Profile {
@@ -78,33 +79,212 @@ export interface OrgMemberWithProfile extends OrgMember {
 }
 
 // ── Supabase Database type map (for createClient<Database>()) ─
+// Uses explicit optional-field format required by @supabase/supabase-js v2.98+
 export interface Database {
   public: {
     Tables: {
       profiles: {
-        Row:    Profile
-        Insert: Omit<Profile, 'created_at' | 'updated_at'>
-        Update: Partial<Omit<Profile, 'id' | 'created_at' | 'updated_at'>>
+        Row: {
+          id:          string
+          email:       string
+          full_name:   string | null
+          avatar_url:  string | null
+          created_at:  string
+          updated_at:  string
+        }
+        Insert: {
+          id:          string
+          email:       string
+          full_name?:  string | null
+          avatar_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          email?:      string
+          full_name?:  string | null
+          avatar_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       organizations: {
-        Row:    Organization
-        Insert: Omit<Organization, 'id' | 'created_at'>
-        Update: Partial<Pick<Organization, 'name' | 'slug'>>
+        Row: {
+          id:         string
+          name:       string
+          slug:       string
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?:        string
+          name:       string
+          slug:       string
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          name?: string
+          slug?: string
+        }
+        Relationships: []
       }
       organization_members: {
-        Row:    OrgMember
-        Insert: Omit<OrgMember, 'id' | 'joined_at'>
-        Update: Pick<OrgMember, 'role'>
+        Row: {
+          id:              string
+          organization_id: string
+          user_id:         string
+          role:            AppRole
+          invited_by:      string | null
+          joined_at:       string
+        }
+        Insert: {
+          id?:              string
+          organization_id:  string
+          user_id:          string
+          role?:            AppRole
+          invited_by?:      string | null
+          joined_at?:       string
+        }
+        Update: {
+          role?: AppRole
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       tickets: {
-        Row:    Ticket
-        Insert: Omit<Ticket, 'id' | 'comments_count' | 'created_at' | 'updated_at' | 'deleted_at'>
-        Update: Partial<Omit<Ticket, 'id' | 'organization_id' | 'created_by' | 'created_at' | 'updated_at'>>
+        Row: {
+          id:              string
+          organization_id: string
+          created_by:      string
+          assignee_id:     string | null
+          title:           string
+          description:     string | null
+          status:          TicketStatus
+          priority:        TicketPriority
+          due_date:        string | null
+          tags:            string[]
+          comments_count:  number
+          created_at:      string
+          updated_at:      string
+          deleted_at:      string | null
+        }
+        Insert: {
+          id?:              string
+          organization_id:  string
+          created_by:       string
+          assignee_id?:     string | null
+          title:            string
+          description?:     string | null
+          status?:          TicketStatus
+          priority?:        TicketPriority
+          due_date?:        string | null
+          tags?:            string[]
+          comments_count?:  number
+          created_at?:      string
+          updated_at?:      string
+          deleted_at?:      string | null
+        }
+        Update: {
+          assignee_id?:  string | null
+          title?:        string
+          description?:  string | null
+          status?:       TicketStatus
+          priority?:     TicketPriority
+          due_date?:     string | null
+          tags?:         string[]
+          deleted_at?:   string | null
+        }
+        Relationships: []
       }
       ticket_comments: {
-        Row:    TicketComment
-        Insert: Omit<TicketComment, 'id' | 'created_at'>
-        Update: Pick<TicketComment, 'body'>
+        Row: {
+          id:         string
+          ticket_id:  string
+          author_id:  string
+          body:       string
+          created_at: string
+        }
+        Insert: {
+          id?:        string
+          ticket_id:  string
+          author_id:  string
+          body:       string
+          created_at?: string
+        }
+        Update: {
+          body?: string
+        }
+        Relationships: []
+      }
+    }
+    Views:          { [_ in never]: never }
+    Functions: {
+      create_organization: {
+        Args: { org_name: string; org_slug: string }
+        Returns: Json
+      }
+      create_ticket: {
+        Args: {
+          p_org_id:       string
+          p_title:        string
+          p_description?: string | null
+          p_priority?:    TicketPriority
+          p_assignee_id?: string | null
+          p_due_date?:    string | null
+          p_tags?:        string[]
+        }
+        Returns: Json
+      }
+      update_ticket: {
+        Args: {
+          p_ticket_id:   string
+          p_title:       string
+          p_description: string | null
+          p_priority:    TicketPriority
+          p_assignee_id: string | null
+          p_due_date:    string | null
+          p_tags:        string[]
+        }
+        Returns: Json
+      }
+      update_ticket_status: {
+        Args: { p_ticket_id: string; p_status: TicketStatus }
+        Returns: Json
+      }
+      delete_ticket: {
+        Args: { p_ticket_id: string }
+        Returns: void
+      }
+      create_comment: {
+        Args: { p_ticket_id: string; p_body: string }
+        Returns: Json
+      }
+      delete_comment: {
+        Args: { p_comment_id: string }
+        Returns: void
+      }
+      add_org_member: {
+        Args: { p_org_id: string; p_email: string }
+        Returns: Json
+      }
+      remove_org_member: {
+        Args: { p_member_id: string }
+        Returns: void
       }
     }
     Enums: {
@@ -112,5 +292,6 @@ export interface Database {
       ticket_status:   TicketStatus
       ticket_priority: TicketPriority
     }
+    CompositeTypes: { [_ in never]: never }
   }
 }

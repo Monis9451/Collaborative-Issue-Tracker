@@ -2,12 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 /**
- * Proxy (Next.js 16 equivalent of middleware) — runs on every request.
+ * proxy.ts — Next.js 16 edge proxy (replaces middleware.ts).
+ *
+ * Next.js 16 renamed the convention from `middleware` → `proxy`.
+ * The exported function must be named `proxy` and the file must be
+ * `proxy.ts` at the project root.
  *
  * Responsibilities:
- *  1. Refresh the Supabase session cookie (keeps the user logged in).
- *  2. Redirect unauthenticated users away from protected routes → /login.
- *  3. Redirect already-authenticated users away from auth pages → /tickets.
+ *  1. Refresh the Supabase session cookie on every request.
+ *  2. Redirect unauthenticated users hitting /dashboard → /login.
+ *  3. Redirect authenticated users hitting /login or /register → /dashboard.
  */
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -21,7 +25,6 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // Write updated cookies onto both the request and the response
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -34,34 +37,33 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // ⚠️  DO NOT run any logic between createServerClient and getUser().
-  //     A stale session token causes a redirect loop.
+  // ⚠️  Do NOT add any logic between createServerClient and getUser().
+  //     getUser() must run immediately to refresh the session token.
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
 
-  // Routes that require authentication
-  const isProtectedRoute =
-    pathname.startsWith('/tickets') ||
-    pathname.startsWith('/organization') ||
-    pathname === '/dashboard'
+  // Routes that require an authenticated session
+  const isProtectedRoute = pathname.startsWith('/dashboard')
 
-  // Routes only for unauthenticated users
+  // Routes that should be inaccessible once logged in
   const isAuthRoute =
     pathname.startsWith('/login') || pathname.startsWith('/register')
 
+  // Unauthenticated user tries to access a protected page → /login
   if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/login'
+    return NextResponse.redirect(redirectUrl)
   }
 
+  // Authenticated user lands on an auth page → /dashboard
   if (user && isAuthRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/tickets'
-    return NextResponse.redirect(url)
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/dashboard'
+    return NextResponse.redirect(redirectUrl)
   }
 
   return supabaseResponse
@@ -69,13 +71,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Run middleware on all paths EXCEPT:
-     *   - _next/static  (static files)
-     *   - _next/image   (image optimisation)
-     *   - favicon.ico
-     *   - public folder assets
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
