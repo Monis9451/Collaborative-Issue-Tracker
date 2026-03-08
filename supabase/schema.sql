@@ -463,10 +463,19 @@ create policy "comments: org members can create"
   );
 
 -- Authors can edit their own comments; admins can edit any comment
+-- WITH CHECK ensures author_id cannot be reassigned after the fact.
 create policy "comments: author or admin can update"
   on public.ticket_comments for update
   to authenticated
   using (
+    author_id = auth.uid()
+    or exists (
+      select 1 from public.tickets t
+      where t.id = ticket_id
+      and   public.is_org_admin(t.organization_id)
+    )
+  )
+  with check (
     author_id = auth.uid()
     or exists (
       select 1 from public.tickets t

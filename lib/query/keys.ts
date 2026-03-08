@@ -21,9 +21,11 @@ export const queryKeys = {
 
   // ── Organizations ─────────────────────────────────────────
   orgs: {
-    all:    () => ['orgs']                     as const,
-    lists:  () => ['orgs', 'list']             as const,
-    detail: (id: string) => ['orgs', 'detail', id] as const,
+    all:    () => ['orgs']                                          as const,
+    lists:  () => ['orgs', 'list']                                  as const,
+    list:   (params?: Record<string, unknown>) =>
+              ['orgs', 'list', params ?? {}]                        as const,
+    detail: (id: string) => ['orgs', 'detail', id]                 as const,
   },
 
   // ── Organization Members ──────────────────────────────────

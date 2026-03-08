@@ -2,18 +2,17 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 /**
- * proxy.ts — Next.js 16 edge proxy (replaces middleware.ts).
+ * middleware.ts — Next.js edge middleware.
  *
- * Next.js 16 renamed the convention from `middleware` → `proxy`.
- * The exported function must be named `proxy` and the file must be
- * `proxy.ts` at the project root.
+ * Must be named `middleware.ts` at the project root so Next.js
+ * automatically picks it up as the edge handler.
  *
  * Responsibilities:
  *  1. Refresh the Supabase session cookie on every request.
  *  2. Redirect unauthenticated users hitting /dashboard → /login.
  *  3. Redirect authenticated users hitting /login or /register → /dashboard.
  */
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
