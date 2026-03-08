@@ -57,7 +57,7 @@ export function CommentItem({ comment, currentUserId, userRole }: CommentItemPro
           aria-label="Delete comment"
           className={cn(
             'shrink-0 flex h-6 w-6 items-center justify-center rounded text-text-muted',
-            'opacity-0 group-hover:opacity-100 transition-opacity',
+            'opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity',
             'hover:bg-danger-light hover:text-danger cursor-pointer',
             'disabled:opacity-30',
           )}
