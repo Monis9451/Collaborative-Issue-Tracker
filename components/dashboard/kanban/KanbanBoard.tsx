@@ -47,6 +47,7 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
 
   // ── Group tickets by status (exclude the card being dragged) ─
   const columns = useMemo(() => {
+    const PRIORITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 }
     const map: Record<TicketStatus, TicketWithProfiles[]> = {
       open:        [],
       in_progress: [],
@@ -54,6 +55,10 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
     }
     for (const t of tickets) {
       if (t.id !== activeId) map[t.status].push(t)   // hide while dragging
+    }
+    // Sort each column: high → medium → low
+    for (const status of Object.keys(map) as TicketStatus[]) {
+      map[status].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority])
     }
     return map
   }, [tickets, activeId])
