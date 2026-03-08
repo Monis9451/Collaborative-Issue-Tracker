@@ -7,6 +7,7 @@ import {
   DragStartEvent,
   DragOverlay,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   closestCenter,
@@ -66,8 +67,15 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
 
   // ── DnD sensors ──────────────────────────────────────────
   const sensors = useSensors(
+    // Mouse / trackpad: start dragging after moving 8px (preserves click)
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 }, // < 8px = click, ≥ 8px = drag
+      activationConstraint: { distance: 8 },
+    }),
+    // Touch: long-press 250 ms to pick up a card, then drag freely.
+    // tolerance:5 allows slight finger movement during the press without
+    // cancelling, which is important on shaky hands / older devices.
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
     }),
   )
 
