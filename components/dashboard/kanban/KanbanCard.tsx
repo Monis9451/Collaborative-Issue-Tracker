@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { MessageSquare, Calendar, MoreVertical } from 'lucide-react'
+import { MessageSquare, Calendar, MoreVertical, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TicketPriorityBadge } from '@/components/dashboard/tickets/TicketPriorityBadge'
 import { useIsMobile } from '@/hooks/useIsMobile'
@@ -132,12 +132,26 @@ export function KanbanCardBody({
         <TicketPriorityBadge priority={ticket.priority} />
 
         {/* Due date */}
-        {ticket.due_date && (
-          <span className="flex items-center gap-1 text-[11px] text-text-muted">
-            <Calendar className="h-3 w-3" strokeWidth={1.8} />
-            {format(new Date(ticket.due_date), 'dd MMM')}
-          </span>
-        )}
+        {ticket.due_date && (() => {
+          const today    = new Date().toISOString().split('T')[0]
+          const overdue  = ticket.status !== 'closed' && ticket.due_date <= today
+          return (
+            <span className={cn(
+              'flex items-center gap-1 text-[11px]',
+              overdue ? 'text-danger font-semibold' : 'text-text-muted',
+            )}>
+              {overdue
+                ? <AlertCircle className="h-3 w-3" strokeWidth={2} />
+                : <Calendar    className="h-3 w-3" strokeWidth={1.8} />}
+              {format(new Date(ticket.due_date), 'dd MMM')}
+              {overdue && (
+                <span className="rounded-full bg-danger-light px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-danger">
+                  Overdue
+                </span>
+              )}
+            </span>
+          )
+        })()}
 
         {/* Push remaining right */}
         <span className="ml-auto flex items-center gap-1.5">
