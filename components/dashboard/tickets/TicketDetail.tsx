@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Pencil, Trash2, X, Send } from 'lucide-react'
+import { Pencil, Trash2, X, Send, AlertCircle, Calendar } from 'lucide-react'
 import { TicketStatusBadge } from './TicketStatusBadge'
 import { TicketPriorityBadge } from './TicketPriorityBadge'
 import { TicketForm } from './TicketForm'
@@ -243,16 +243,30 @@ function ViewMode({
                 </p>
               </div>
             )}
-            {ticket.due_date && (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-0.5">
-                  Due Date
-                </p>
-                <p className="text-sm font-medium text-text-primary">
-                  {format(new Date(ticket.due_date), 'dd MMM yyyy')}
-                </p>
-              </div>
-            )}
+            {ticket.due_date && (() => {
+              const today   = new Date().toISOString().split('T')[0]
+              const overdue = ticket.status !== 'closed' && ticket.due_date <= today
+              return (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-0.5">
+                    Due Date
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    {overdue
+                      ? <AlertCircle className="h-3.5 w-3.5 text-danger" strokeWidth={2} />
+                      : <Calendar    className="h-3.5 w-3.5 text-text-muted" strokeWidth={1.8} />}
+                    <p className={overdue ? 'text-sm font-semibold text-danger' : 'text-sm font-medium text-text-primary'}>
+                      {format(new Date(ticket.due_date), 'dd MMM yyyy')}
+                    </p>
+                    {overdue && (
+                      <span className="rounded-full bg-danger-light px-2 py-px text-[10px] font-bold uppercase tracking-wide text-danger">
+                        Overdue
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
           </div>
         )}
 
