@@ -1,26 +1,192 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * ─────────────────────────────────────────────────────────────
+ *  Jira-inspired Design Tokens
+ *  Light theme only — consistent with Jira's default palette.
+ *  Font: Nunito (loaded via next/font in layout.tsx)
+ * ─────────────────────────────────────────────────────────────
+ */
+@theme {
+  /* ── Brand Blues (Jira core palette) ─────────────────────── */
+  --color-jira-blue:        #0052CC;   /* Primary actions, links  */
+  --color-jira-blue-hover:  #0065FF;   /* Hover state             */
+  --color-jira-blue-dark:   #0747A6;   /* Sidebar, heavy accents  */
+  --color-jira-blue-light:  #DEEBFF;   /* Subtle tints, badges    */
+  --color-jira-blue-xlight: #F4F5F7;   /* Page background         */
+
+  /* ── Neutrals ────────────────────────────────────────────── */
+  --color-text-primary:   #172B4D;     /* Headings, body copy     */
+  --color-text-secondary: #5E6C84;     /* Labels, meta text       */
+  --color-text-muted:     #8993A4;     /* Placeholders, disabled  */
+  --color-border:         #DFE1E6;     /* Input borders, dividers */
+  --color-surface:        #FFFFFF;     /* Cards, modals           */
+  --color-bg:             #F4F5F7;     /* App background          */
+
+  /* ── Semantic Status Colors ──────────────────────────────── */
+  --color-success:        #00875A;     /* Ticket closed / done    */
+  --color-success-light:  #E3FCEF;
+  --color-warning:        #FF8B00;     /* Medium priority         */
+  --color-warning-light:  #FFFAE6;
+  --color-danger:         #DE350B;     /* Errors, high priority   */
+  --color-danger-light:   #FFEBE6;
+  --color-info:           #0052CC;     /* Info alerts             */
+  --color-info-light:     #DEEBFF;
+
+  /* ── Ticket Priority ─────────────────────────────────────── */
+  --color-priority-high:   #DE350B;
+  --color-priority-medium: #FF8B00;
+  --color-priority-low:    #36B37E;
+
+  /* ── Ticket Status ───────────────────────────────────────── */
+  --color-status-open:        #0052CC;
+  --color-status-in-progress: #FF8B00;
+  --color-status-closed:      #00875A;
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Shadows ─────────────────────────────────────────────── */
+  --shadow-card:  0 1px 3px 0 rgba(23, 43, 77, 0.12),
+                  0 0 0 1px rgba(223, 225, 230, 0.6);
+  --shadow-modal: 0 8px 32px 0 rgba(23, 43, 77, 0.16);
+  --shadow-auth:  0 4px 24px 0 rgba(0, 82, 204, 0.10);
+
+  /* ── Border Radius ───────────────────────────────────────── */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+  --radius-2xl: 16px;
+
+  /* ── Aliases used by pre-existing components ────────────────── */
+  --color-bg-base:    #F4F5F7;   /* alias for --color-bg          */
+  --color-bg-overlay: color-mix(in srgb, #172B4D 40%, transparent);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Base resets ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+}
+
+/* ── Focus ring — Jira blue, accessible ──────────────────────── */
+/* Note: no border-radius here — each element owns its own radius */
+:focus-visible {
+  outline: 2px solid var(--color-jira-blue);
+  outline-offset: 2px;
+}
+
+/* ── Selection ───────────────────────────────────────────────── */
+::selection {
+  background-color: var(--color-jira-blue-light);
+  color: var(--color-jira-blue-dark);
+}
+
+/* ── Scrollbar (WebKit) ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* ── Three-body spinner (used by Spinner component) ──────────── */
+.three-body {
+  --uib-size:  35px;
+  --uib-speed: 0.8s;
+  --uib-color: #0052CC;
+  position: relative;
+  display: inline-block;
+  height: var(--uib-size);
+  width:  var(--uib-size);
+  animation: three-body-spin calc(var(--uib-speed) * 2.5) infinite linear;
+}
+/* Size modifiers */
+.three-body--sm { --uib-size: 24px; --uib-speed: 0.7s;  }
+.three-body--lg { --uib-size: 44px; --uib-speed: 0.8s;  }
+.three-body--xl { --uib-size: 56px; --uib-speed: 0.85s; }
+
+.three-body__dot {
+  position: absolute;
+  height: 100%;
+  width:  30%;
+}
+.three-body__dot::after {
+  content: '';
+  position: absolute;
+  height: 0%;
+  width:  100%;
+  padding-bottom: 100%;
+  background-color: var(--uib-color);
+  border-radius: 50%;
+}
+.three-body__dot:nth-child(1) {
+  bottom: 5%;
+  left:   0;
+  transform: rotate(60deg);
+  transform-origin: 50% 85%;
+}
+.three-body__dot:nth-child(1)::after {
+  bottom: 0;
+  left:   0;
+  animation: three-body-wobble1 var(--uib-speed) infinite ease-in-out;
+  animation-delay: calc(var(--uib-speed) * -0.3);
+}
+.three-body__dot:nth-child(2) {
+  bottom: 5%;
+  right:  0;
+  transform: rotate(-60deg);
+  transform-origin: 50% 85%;
+}
+.three-body__dot:nth-child(2)::after {
+  bottom: 0;
+  left:   0;
+  animation: three-body-wobble1 var(--uib-speed) infinite ease-in-out;
+  animation-delay: calc(var(--uib-speed) * -0.15);
+}
+.three-body__dot:nth-child(3) {
+  bottom: -5%;
+  left:   0;
+  transform: translateX(116.666%);
+}
+.three-body__dot:nth-child(3)::after {
+  top:  0;
+  left: 0;
+  animation: three-body-wobble2 var(--uib-speed) infinite ease-in-out;
+}
+
+@keyframes three-body-spin {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
+}
+@keyframes three-body-wobble1 {
+  0%, 100% { transform: translateY(0%)    scale(1);    opacity: 1;   }
+  50%       { transform: translateY(-66%) scale(0.65); opacity: 0.8; }
+}
+@keyframes three-body-wobble2 {
+  0%, 100% { transform: translateY(0%)   scale(1);    opacity: 1;   }
+  50%       { transform: translateY(66%) scale(0.65); opacity: 0.8; }
 }
