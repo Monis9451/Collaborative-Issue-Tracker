@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -13,15 +13,36 @@ import type { TicketWithProfiles, TicketPriority } from '@/types/database'
 //  Schema
 // ─────────────────────────────────────────────────────────────
 
-const ticketSchema = z.object({
-  title:       z.string().min(1, 'Title is required').max(200),
-  description: z.string().max(5000).optional().or(z.literal('')),
-  priority:    z.enum(['low', 'medium', 'high']),
-  assigneeId:  z.string().optional().or(z.literal('')),
-  dueDate:     z.string().optional().or(z.literal('')),
-})
+/**
+ * In create mode (originalDueDate = undefined): any non-empty due date must be
+ * today or later.
+ * In edit mode: the original due date is always allowed unchanged (so admins
+ * aren't forced to update a date they didn't touch); any *new* date still must
+ * be today or later.
+ */
+function makeTicketSchema(originalDueDate?: string | null) {
+  const today = new Date().toISOString().split('T')[0]
+  return z.object({
+    title:       z.string().min(1, 'Title is required').max(200),
+    description: z.string().max(5000).optional().or(z.literal('')),
+    priority:    z.enum(['low', 'medium', 'high']),
+    assigneeId:  z.string().optional().or(z.literal('')),
+    dueDate:     z
+      .string()
+      .optional()
+      .or(z.literal(''))
+      .refine(
+        (val) => {
+          if (!val) return true                    // cleared — OK
+          if (val === originalDueDate) return true // unchanged existing date — OK
+          return val >= today                      // new date must be today or later
+        },
+        { message: 'Due date must be today or a future date' },
+      ),
+  })
+}
 
-type TicketFormValues = z.infer<typeof ticketSchema>
+type TicketFormValues = z.infer<ReturnType<typeof makeTicketSchema>>
 
 // ─────────────────────────────────────────────────────────────
 //  Props
@@ -46,13 +67,15 @@ export function TicketForm({ orgId, ticket, onSuccess, onCancel }: TicketFormPro
   const updateTicket = useUpdateTicket(orgId)
   const { data: members = [] } = useOrgMembers(orgId)
 
+  const schema = useMemo(() => makeTicketSchema(ticket?.due_date), [ticket?.due_date])
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<TicketFormValues>({
-    resolver:     zodResolver(ticketSchema),
+    resolver:     zodResolver(schema),
     defaultValues: {
       title:       ticket?.title       ?? '',
       description: ticket?.description ?? '',
@@ -194,11 +217,23 @@ export function TicketForm({ orgId, ticket, onSuccess, onCancel }: TicketFormPro
         <input
           id="tf-due"
           type="date"
+          min={
+            // In edit mode with an existing past date, allow that date unchanged.
+            // Otherwise restrict to today or later.
+            isEdit && ticket?.due_date
+              ? (ticket.due_date < new Date().toISOString().split('T')[0]
+                  ? ticket.due_date
+                  : new Date().toISOString().split('T')[0])
+              : new Date().toISOString().split('T')[0]
+          }
           {...register('dueDate')}
           className="rounded-md border border-border bg-white px-3 py-2 text-sm
                      text-text-primary focus:border-jira-blue focus:outline-none
                      focus:ring-2 focus:ring-jira-blue/20 transition-colors"
         />
+        {errors.dueDate && (
+          <p className="text-xs text-danger">{errors.dueDate.message}</p>
+        )}
       </div>
 
       {/* Error */}
