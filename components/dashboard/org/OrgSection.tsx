@@ -8,14 +8,15 @@ import type { OrgWithRole } from '@/hooks/useOrganizations'
 // ─────────────────────────────────────────────────────────────
 
 interface OrgSectionProps {
-  title:     string
-  subtitle?: string
-  orgs:      OrgWithRole[]
+  title:           string
+  subtitle?:       string
+  orgs:            OrgWithRole[]
   /** Optional action (e.g. "New Org" button) rendered next to the heading */
-  action?:   ReactNode
+  action?:         ReactNode
+  onDeleteClick?:  (org: OrgWithRole) => void
 }
 
-export function OrgSection({ title, subtitle, orgs, action }: OrgSectionProps) {
+export function OrgSection({ title, subtitle, orgs, action, onDeleteClick }: OrgSectionProps) {
   if (orgs.length === 0) return null
 
   return (
@@ -38,6 +39,7 @@ export function OrgSection({ title, subtitle, orgs, action }: OrgSectionProps) {
             key={organization.id}
             organization={organization}
             role={role}
+            onDeleteClick={onDeleteClick ? () => onDeleteClick({ organization, role }) : undefined}
           />
         ))}
       </div>

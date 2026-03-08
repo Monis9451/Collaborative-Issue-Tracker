@@ -10,7 +10,9 @@ import {
   NewOrgButton,
   ProminentCreateButton,
 } from '@/components/dashboard/org/CreateOrgModal'
+import { DeleteOrgModal } from '@/components/dashboard/org/DeleteOrgModal'
 import { Spinner } from '@/components/ui/spinner'
+import type { OrgWithRole } from '@/hooks/useOrganizations'
 
 // ─────────────────────────────────────────────────────────────
 //  OrgsDashboard — client component that owns all org-related
@@ -33,7 +35,8 @@ const sectionVariant = {
 }
 
 export function OrgsDashboard() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpen,    setModalOpen]    = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<OrgWithRole | null>(null)
 
   const {
     adminOrgs,
@@ -93,6 +96,7 @@ export function OrgsDashboard() {
               title="My Organizations"
               orgs={adminOrgs}
               action={<NewOrgButton onClick={() => setModalOpen(true)} />}
+              onDeleteClick={setDeleteTarget}
             />
           </motion.div>
         )}
@@ -116,6 +120,14 @@ export function OrgsDashboard() {
       </motion.div>
 
       <CreateOrgModal open={modalOpen} onClose={() => setModalOpen(false)} />
+
+      {/* Delete confirmation modal */}
+      <DeleteOrgModal
+        open={deleteTarget !== null}
+        orgId={deleteTarget?.organization.id ?? ''}
+        orgName={deleteTarget?.organization.name ?? ''}
+        onClose={() => setDeleteTarget(null)}
+      />
     </>
   )
 }

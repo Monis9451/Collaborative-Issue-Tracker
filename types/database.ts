@@ -286,6 +286,10 @@ export interface Database {
         Args: { p_member_id: string }
         Returns: void
       }
+      delete_organization: {
+        Args: { p_org_id: string }
+        Returns: void
+      }
     }
     Enums: {
       app_role:        AppRole
