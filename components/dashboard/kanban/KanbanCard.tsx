@@ -2,7 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { MessageSquare, Calendar } from 'lucide-react'
+import { MessageSquare, Calendar, GripVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TicketPriorityBadge } from '@/components/dashboard/tickets/TicketPriorityBadge'
 import type { TicketWithProfiles } from '@/types/database'
@@ -35,6 +35,11 @@ export function KanbanCardBody({ ticket, isDragging, className }: KanbanCardBody
         className,
       )}
     >
+      {/* Mobile drag handle — visible only on touch screens */}
+      <div className="md:hidden flex items-center justify-end -mt-1 mb-1">
+        <GripVertical className="h-3.5 w-3.5 text-text-muted/50" strokeWidth={1.8} />
+      </div>
+
       {/* Title */}
       <p className="mb-2 text-sm font-medium text-text-primary line-clamp-2 leading-snug">
         {ticket.title}
