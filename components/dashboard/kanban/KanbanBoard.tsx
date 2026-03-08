@@ -7,7 +7,6 @@ import {
   DragStartEvent,
   DragOverlay,
   PointerSensor,
-  TouchSensor,
   useSensor,
   useSensors,
   closestCenter,
@@ -67,16 +66,18 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
 
   // ── DnD sensors ──────────────────────────────────────────
   const sensors = useSensors(
-    // Mouse / trackpad: start dragging after moving 8px (preserves click)
+    // Mouse / trackpad only — mobile uses the 3-dot move menu instead
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
     }),
-    // Touch: long-press 250 ms to pick up a card, then drag freely.
-    // tolerance:5 allows slight finger movement during the press without
-    // cancelling, which is important on shaky hands / older devices.
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 250, tolerance: 5 },
-    }),
+  )
+
+  // ── Mobile move handler (3-dot menu) ─────────────────────────────
+  const handleMoveStatus = useCallback(
+    (ticketId: string, status: TicketStatus) => {
+      updateStatus.mutate({ ticketId, status })
+    },
+    [updateStatus],
   )
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -167,7 +168,9 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
       </div>
 
       {/* ── Kanban columns ───────────────────────────────────── */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+      {/* Mobile: vertical scroll — columns stack, no gesture conflict with DnD. */}
+      {/* Desktop: horizontal scroll with fixed-height columns.                  */}
+      <div className="flex-1 overflow-y-auto md:overflow-x-auto md:overflow-y-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -175,13 +178,14 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <div className="flex h-full items-start gap-4 p-5">
+          <div className="flex flex-col gap-4 p-4 md:flex-row md:h-full md:items-start md:p-5">
             {STATUSES.map(status => (
               <KanbanColumn
                 key={status}
                 status={status}
                 tickets={columns[status]}
                 onCardClick={handleCardClick}
+                onMoveStatus={handleMoveStatus}
               />
             ))}
           </div>
@@ -189,7 +193,7 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
           {/* ── Drag ghost — follows the cursor smoothly ─────── */}
           <DragOverlay dropAnimation={null}>
             {activeTicket ? (
-              <div className="w-72">
+              <div className="w-[calc(100vw-2rem)] md:w-72">
                 <KanbanCardBody ticket={activeTicket} isDragging />
               </div>
             ) : null}

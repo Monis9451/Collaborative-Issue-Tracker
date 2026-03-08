@@ -1,12 +1,26 @@
 'use client'
 
+import { useRef, useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { MessageSquare, Calendar, GripVertical } from 'lucide-react'
+import { MessageSquare, Calendar, MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TicketPriorityBadge } from '@/components/dashboard/tickets/TicketPriorityBadge'
-import type { TicketWithProfiles } from '@/types/database'
+import { useIsMobile } from '@/hooks/useIsMobile'
+import type { TicketWithProfiles, TicketStatus } from '@/types/database'
 import { format } from 'date-fns'
+
+// ─────────────────────────────────────────────────────────────
+//  Column display labels
+// ─────────────────────────────────────────────────────────────
+
+const STATUS_LABELS: Record<TicketStatus, string> = {
+  open:        'Open',
+  in_progress: 'In Progress',
+  closed:      'Closed',
+}
+
+const ALL_STATUSES: TicketStatus[] = ['open', 'in_progress', 'closed']
 
 // ─────────────────────────────────────────────────────────────
 //  KanbanCardBody — pure visual card, no DnD wiring.
@@ -14,15 +28,42 @@ import { format } from 'date-fns'
 // ─────────────────────────────────────────────────────────────
 
 interface KanbanCardBodyProps {
-  ticket:     TicketWithProfiles
-  isDragging?: boolean
-  className?: string
+  ticket:        TicketWithProfiles
+  currentStatus?: TicketStatus
+  onMoveStatus?: (ticketId: string, status: TicketStatus) => void
+  isDragging?:   boolean
+  className?:    string
 }
 
-export function KanbanCardBody({ ticket, isDragging, className }: KanbanCardBodyProps) {
+export function KanbanCardBody({
+  ticket,
+  currentStatus,
+  onMoveStatus,
+  isDragging,
+  className,
+}: KanbanCardBodyProps) {
   const assigneeInitials = ticket.assignee?.full_name
     ? ticket.assignee.full_name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     : ticket.assignee?.email?.[0]?.toUpperCase()
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
+
+  const otherStatuses = currentStatus
+    ? ALL_STATUSES.filter(s => s !== currentStatus)
+    : []
 
   return (
     <div
@@ -35,15 +76,56 @@ export function KanbanCardBody({ ticket, isDragging, className }: KanbanCardBody
         className,
       )}
     >
-      {/* Mobile drag handle — visible only on touch screens */}
-      <div className="md:hidden flex items-center justify-end -mt-1 mb-1">
-        <GripVertical className="h-3.5 w-3.5 text-text-muted/50" strokeWidth={1.8} />
-      </div>
+      {/* Title row — title + mobile 3-dot menu side by side */}
+      <div className="flex items-start gap-2 mb-2">
+        <p className="flex-1 text-sm font-medium text-text-primary line-clamp-2 leading-snug">
+          {ticket.title}
+        </p>
 
-      {/* Title */}
-      <p className="mb-2 text-sm font-medium text-text-primary line-clamp-2 leading-snug">
-        {ticket.title}
-      </p>
+        {/* Mobile-only move menu */}
+        {onMoveStatus && currentStatus && (
+          <div ref={menuRef} className="relative md:hidden shrink-0">
+            <button
+              type="button"
+              onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
+              aria-label="Move ticket"
+              className="flex h-6 w-6 items-center justify-center rounded
+                         text-text-muted hover:bg-gray-100 hover:text-text-secondary
+                         transition-colors cursor-pointer"
+            >
+              <MoreVertical className="h-4 w-4" strokeWidth={1.8} />
+            </button>
+
+            {menuOpen && (
+              <div
+                className="absolute right-0 top-7 z-50 min-w-[140px] rounded-lg
+                           border border-border bg-white shadow-modal py-1"
+              >
+                <p className="px-3 py-1 text-[10px] font-semibold uppercase
+                              tracking-wider text-text-muted">
+                  Move to
+                </p>
+                {otherStatuses.map(s => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation()
+                      onMoveStatus(ticket.id, s)
+                      setMenuOpen(false)
+                    }}
+                    className="flex w-full items-center px-3 py-2 text-sm
+                               text-text-primary hover:bg-gray-50 transition-colors
+                               cursor-pointer"
+                  >
+                    {STATUS_LABELS[s]}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Footer row */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -88,11 +170,15 @@ export function KanbanCardBody({ ticket, isDragging, className }: KanbanCardBody
 // ─────────────────────────────────────────────────────────────
 
 interface KanbanCardProps {
-  ticket:  TicketWithProfiles
-  onClick: (ticket: TicketWithProfiles) => void
+  ticket:        TicketWithProfiles
+  currentStatus: TicketStatus
+  onMoveStatus:  (ticketId: string, status: TicketStatus) => void
+  onClick:       (ticket: TicketWithProfiles) => void
 }
 
-export function KanbanCard({ ticket, onClick }: KanbanCardProps) {
+export function KanbanCard({ ticket, currentStatus, onMoveStatus, onClick }: KanbanCardProps) {
+  const isMobile = useIsMobile()
+
   const {
     attributes,
     listeners,
@@ -105,7 +191,6 @@ export function KanbanCard({ ticket, onClick }: KanbanCardProps) {
   const style = {
     transform:  CSS.Transform.toString(transform),
     transition,
-    // Hide the original card while dragging (DragOverlay takes its place)
     opacity: isDragging ? 0 : undefined,
   }
 
@@ -114,10 +199,15 @@ export function KanbanCard({ ticket, onClick }: KanbanCardProps) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
+      // On mobile we skip DnD listeners entirely — 3-dot menu is used instead
+      {...(isMobile ? {} : listeners)}
       onClick={() => onClick(ticket)}
     >
-      <KanbanCardBody ticket={ticket} />
+      <KanbanCardBody
+        ticket={ticket}
+        currentStatus={currentStatus}
+        onMoveStatus={isMobile ? onMoveStatus : undefined}
+      />
     </div>
   )
 }
