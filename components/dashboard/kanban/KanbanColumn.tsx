@@ -21,12 +21,13 @@ const columnConfig: Record<TicketStatus, { label: string; accentClass: string }>
 // ─────────────────────────────────────────────────────────────
 
 interface KanbanColumnProps {
-  status:  TicketStatus
-  tickets: TicketWithProfiles[]
-  onCardClick: (ticket: TicketWithProfiles) => void
+  status:       TicketStatus
+  tickets:      TicketWithProfiles[]
+  onCardClick:  (ticket: TicketWithProfiles) => void
+  onMoveStatus: (ticketId: string, status: TicketStatus) => void
 }
 
-export function KanbanColumn({ status, tickets, onCardClick }: KanbanColumnProps) {
+export function KanbanColumn({ status, tickets, onCardClick, onMoveStatus }: KanbanColumnProps) {
   const { label, accentClass } = columnConfig[status]
 
   const { setNodeRef, isOver } = useDroppable({ id: status })
@@ -34,7 +35,9 @@ export function KanbanColumn({ status, tickets, onCardClick }: KanbanColumnProps
   return (
     <div
       className={cn(
-        'flex w-72 shrink-0 flex-col rounded-lg border-t-[3px] bg-bg',
+        // Mobile: full width, stacked vertically
+        // Desktop: fixed 288px column, no shrink
+        'flex w-full flex-col rounded-lg border-t-[3px] bg-bg md:w-72 md:shrink-0',
         accentClass,
       )}
     >
@@ -57,7 +60,10 @@ export function KanbanColumn({ status, tickets, onCardClick }: KanbanColumnProps
         <div
           ref={setNodeRef}
           className={cn(
-            'flex flex-1 flex-col gap-2 overflow-y-auto p-2 rounded-b-lg min-h-[200px]',
+            // Mobile: no fixed height, no inner scroll — the whole page scrolls vertically
+            // Desktop: flex-1 fills column height, inner scroll for overflow
+            'flex flex-col gap-2 p-2 rounded-b-lg min-h-[80px]',
+            'md:flex-1 md:overflow-y-auto md:min-h-[200px]',
             'transition-colors',
             isOver && 'bg-jira-blue-light/40',
           )}
@@ -66,6 +72,8 @@ export function KanbanColumn({ status, tickets, onCardClick }: KanbanColumnProps
             <KanbanCard
               key={ticket.id}
               ticket={ticket}
+              currentStatus={status}
+              onMoveStatus={onMoveStatus}
               onClick={onCardClick}
             />
           ))}
