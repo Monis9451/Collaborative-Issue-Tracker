@@ -6,11 +6,6 @@ import { KanbanSquare, Users, ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Organization } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  MobileNav — bottom-of-header nav strip, visible only on
-//  mobile (<md). Replaces the sidebar for small screens.
-// ─────────────────────────────────────────────────────────────
-
 interface MobileNavProps {
   org: Organization
 }

@@ -1,11 +1,7 @@
 import type { Metadata } from 'next'
 import { WorkspacePageClient } from '@/components/dashboard/workspace/WorkspacePageClient'
 
-// ─────────────────────────────────────────────────────────────
 //  Org Workspace Page
-//  Server component — resolves params and delegates to client.
-//  Data-fetching and interaction happen fully client-side.
-// ─────────────────────────────────────────────────────────────
 
 type Params = Promise<{ orgSlug: string }>
 

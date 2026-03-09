@@ -3,15 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Organization } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Organization Server Actions
-//
-//  Uses rpc() to call a SECURITY DEFINER Postgres function.
-//  This bypasses PostgREST's internal ES256 JWT re-verification
-//  bug which causes auth.uid() to return NULL at the RLS layer,
-//  while still keeping auth.uid() accurate inside the function.
-// ─────────────────────────────────────────────────────────────
-
 export interface CreateOrgInput {
   name: string
   slug: string

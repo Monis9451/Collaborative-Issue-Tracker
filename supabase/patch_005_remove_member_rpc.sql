@@ -1,13 +1,4 @@
--- ─────────────────────────────────────────────────────────────
 -- Patch 005 — remove_org_member RPC
---
--- Allows an org admin to remove a non-admin member.
--- Guards:
---   1. Caller must be authenticated
---   2. Caller must be admin of the org
---   3. Cannot remove yourself
---   4. Cannot remove another admin (prevents accidental lockout)
--- ─────────────────────────────────────────────────────────────
 
 create or replace function public.remove_org_member(
   p_member_id text

@@ -4,10 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { removeOrgMemberAction } from '@/lib/members/actions'
 
-// ─────────────────────────────────────────────────────────────
-//  useRemoveOrgMember
-// ─────────────────────────────────────────────────────────────
-
 export function useRemoveOrgMember(orgId: string) {
   const queryClient = useQueryClient()
 

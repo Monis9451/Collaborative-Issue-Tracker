@@ -9,9 +9,6 @@ import {
 import { queryKeys } from '@/lib/query/keys'
 import type { TicketStatus, TicketWithProfiles } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  useUpdateTicket — full-field edit from the TicketForm
-// ─────────────────────────────────────────────────────────────
 
 export function useUpdateTicket(orgId: string) {
   const queryClient = useQueryClient()
@@ -29,10 +26,6 @@ export function useUpdateTicket(orgId: string) {
     },
   })
 }
-
-// ─────────────────────────────────────────────────────────────
-//  useUpdateTicketStatus — optimistic status change for D&D
-// ─────────────────────────────────────────────────────────────
 
 export function useUpdateTicketStatus(orgId: string) {
   const queryClient = useQueryClient()

@@ -4,9 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteTicketAction } from '@/lib/tickets/actions'
 import { queryKeys } from '@/lib/query/keys'
 
-// ─────────────────────────────────────────────────────────────
-//  useDeleteTicket — soft-deletes a ticket
-// ─────────────────────────────────────────────────────────────
 
 export function useDeleteTicket(orgId: string) {
   const queryClient = useQueryClient()

@@ -13,10 +13,6 @@ import { useCreateComment } from '@/hooks/useCreateComment'
 import type { TicketWithProfiles, AppRole } from '@/types/database'
 import { format } from 'date-fns'
 
-// ─────────────────────────────────────────────────────────────
-//  TicketDetail — centered dialog
-// ─────────────────────────────────────────────────────────────
-
 interface TicketDetailProps {
   ticket:        TicketWithProfiles | null
   orgId:         string

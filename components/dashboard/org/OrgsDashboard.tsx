@@ -14,15 +14,6 @@ import { DeleteOrgModal } from '@/components/dashboard/org/DeleteOrgModal'
 import { Spinner } from '@/components/ui/spinner'
 import type { OrgWithRole } from '@/hooks/useOrganizations'
 
-// ─────────────────────────────────────────────────────────────
-//  OrgsDashboard — client component that owns all org-related
-//  state and composes the dashboard home view.
-//
-//  Three possible states:
-//   1. Loading — spinner centred in the content area
-//   2. Empty   — OrgEmptyState with a prominent create CTA
-//   3. Has orgs — admin section + member section + inline new button
-// ─────────────────────────────────────────────────────────────
 
 const containerVariants = {
   hidden:  {},

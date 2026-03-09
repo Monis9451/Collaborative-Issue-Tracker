@@ -1,12 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-// ─────────────────────────────────────────────────────────────
-//  Button — Jira-styled button primitive.
-//  Variants: primary (blue fill) | ghost (text only) | outline
-//  Sizes:    sm | md (default) | lg
-//  Supports: loading state (spinner + disabled), full-width
-// ─────────────────────────────────────────────────────────────
 
 const variants = {
   primary:

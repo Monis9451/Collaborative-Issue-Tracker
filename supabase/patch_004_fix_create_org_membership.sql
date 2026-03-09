@@ -1,15 +1,4 @@
--- ─────────────────────────────────────────────────────────────
 -- Patch 004 — Fix create_organization to insert creator as admin
---
--- Problem: The create_organization RPC only inserted the org row
--- but never added the creator to organization_members. This means:
---   - The creator can't see any members (RLS requires membership)
---   - The creator can't perform admin actions
---
--- Fix:
---   1. Replace create_organization to also insert creator as admin
---   2. Backfill missing admin rows for all existing orgs
--- ─────────────────────────────────────────────────────────────
 
 -- ── 1. Replace create_organization ───────────────────────────
 create or replace function public.create_organization(
@@ -56,8 +45,6 @@ grant execute on function public.create_organization(text, text) to authenticate
 
 
 -- ── 2. Backfill missing admin rows for existing orgs ─────────
---    For every org where the created_by user has no membership
---    row, insert them as admin.
 insert into public.organization_members
   (organization_id, user_id, role, invited_by, joined_at)
 select

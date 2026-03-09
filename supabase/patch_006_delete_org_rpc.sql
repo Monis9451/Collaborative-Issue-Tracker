@@ -1,15 +1,4 @@
--- ─────────────────────────────────────────────────────────────
 -- Patch 006 — delete_organization RPC
---
--- Allows an org admin to permanently delete an organization.
--- All related data is removed via ON DELETE CASCADE:
---   tickets → ticket_comments, organization_members
---
--- Guards:
---   1. Caller must be authenticated
---   2. Caller must be admin of the target org
---   3. Org must exist
--- ─────────────────────────────────────────────────────────────
 
 create or replace function public.delete_organization(
   p_org_id text

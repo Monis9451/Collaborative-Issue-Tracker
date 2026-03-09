@@ -1,11 +1,6 @@
 import type { Metadata } from 'next'
 import { OrgsDashboard } from '@/components/dashboard/org/OrgsDashboard'
 
-// ─────────────────────────────────────────────────────────────
-//  Dashboard Home — composes OrgsDashboard client component.
-//  All data-fetching and interactivity lives in OrgsDashboard.
-// ─────────────────────────────────────────────────────────────
-
 export const metadata: Metadata = {
   title: 'Dashboard — Collaborative Issue Tracker',
 }

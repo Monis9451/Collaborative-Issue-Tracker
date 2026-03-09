@@ -5,12 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { Organization } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  useOrgBySlug
-//  Fetches a single org by its URL slug. Returns null if the
-//  user isn't a member or the org doesn't exist.
-// ─────────────────────────────────────────────────────────────
-
 async function fetchOrgBySlug(slug: string): Promise<Organization | null> {
   const supabase = createClient()
 

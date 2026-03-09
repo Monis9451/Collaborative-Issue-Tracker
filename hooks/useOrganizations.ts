@@ -5,9 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { Organization, AppRole } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Shape returned by the joined query
-// ─────────────────────────────────────────────────────────────
 export interface OrgWithRole {
   organization: Organization
   role: AppRole

@@ -4,9 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createTicketAction, type CreateTicketInput } from '@/lib/tickets/actions'
 import { queryKeys } from '@/lib/query/keys'
 
-// ─────────────────────────────────────────────────────────────
-//  useCreateTicket
-// ─────────────────────────────────────────────────────────────
 
 export function useCreateTicket(orgId: string) {
   const queryClient = useQueryClient()

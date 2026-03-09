@@ -3,12 +3,6 @@ import { AuthFooterLink } from '@/components/auth/AuthFooterLink'
 import { CheckCircle2 } from 'lucide-react'
 import type { Metadata } from 'next'
 
-// ─────────────────────────────────────────────────────────────
-//  Email Confirmation Page
-//  Shown after successful registration when Supabase requires
-//  email confirmation before the session is activated.
-// ─────────────────────────────────────────────────────────────
-
 export const metadata: Metadata = {
   title: 'Confirm Your Email — Collaborative Issue Tracker',
 }

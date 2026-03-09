@@ -1,13 +1,5 @@
 import { type ReactNode } from 'react'
 
-// ─────────────────────────────────────────────────────────────
-//  Auth Group Layout
-//  Full-screen, vertically + horizontally centered.
-//  Jira-blue gradient background behind the white auth card.
-//  Middleware already guards this group (redirects authenticated
-//  users to /dashboard before this layout even renders).
-// ─────────────────────────────────────────────────────────────
-
 interface AuthLayoutProps {
   children: ReactNode
 }

@@ -4,9 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { deleteOrgAction } from '@/lib/org/actions'
 
-// ─────────────────────────────────────────────────────────────
-//  useDeleteOrg
-// ─────────────────────────────────────────────────────────────
 
 export function useDeleteOrg() {
   const queryClient = useQueryClient()

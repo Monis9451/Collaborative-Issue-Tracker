@@ -1,17 +1,4 @@
--- =============================================================
 -- Patch 002: SECURITY DEFINER RPC functions for tickets/comments
---
--- WHY SECURITY DEFINER?
--- PostgREST uses ES256 JWTs (Supabase default post-mid-2024).
--- When PostgREST re-verifies the JWT internally for mutations,
--- it fails silently and auth.uid() returns NULL inside RLS
--- WITH CHECK clauses — causing 42501 (policy violation) errors.
--- SECURITY DEFINER functions run with the definer's privileges,
--- bypassing PostgREST's re-verification while still having
--- access to auth.uid() via the session context.
---
--- Run this entire file in the Supabase SQL Editor.
--- =============================================================
 
 
 -- ──────────────────────────────────────────────────────────────
@@ -53,12 +40,7 @@ begin
 end;
 $$;
 
-
--- ──────────────────────────────────────────────────────────────
 -- update_ticket
--- Full-field update (from edit form).
--- Admin: any ticket | Member: own (created_by) or assigned ticket.
--- ──────────────────────────────────────────────────────────────
 create or replace function public.update_ticket(
   p_ticket_id   uuid,
   p_title       text,
@@ -113,12 +95,7 @@ begin
 end;
 $$;
 
-
--- ──────────────────────────────────────────────────────────────
 -- update_ticket_status
--- For drag-and-drop status changes (only updates the status field).
--- Admin: any ticket | Member: own / assigned ticket.
--- ──────────────────────────────────────────────────────────────
 create or replace function public.update_ticket_status(
   p_ticket_id uuid,
   p_status    ticket_status
@@ -161,10 +138,7 @@ end;
 $$;
 
 
--- ──────────────────────────────────────────────────────────────
 -- delete_ticket (soft-delete)
--- Admin: any ticket | Member: own tickets (created_by).
--- ──────────────────────────────────────────────────────────────
 create or replace function public.delete_ticket(
   p_ticket_id uuid
 )
@@ -200,10 +174,7 @@ end;
 $$;
 
 
--- ──────────────────────────────────────────────────────────────
 -- create_comment
--- Any org member can comment on a non-deleted ticket.
--- ──────────────────────────────────────────────────────────────
 create or replace function public.create_comment(
   p_ticket_id uuid,
   p_body      text
@@ -244,10 +215,7 @@ end;
 $$;
 
 
--- ──────────────────────────────────────────────────────────────
 -- delete_comment
--- Author can delete own comment. Admin can delete any comment.
--- ──────────────────────────────────────────────────────────────
 create or replace function public.delete_comment(
   p_comment_id uuid
 )

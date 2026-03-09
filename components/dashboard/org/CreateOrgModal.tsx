@@ -44,17 +44,6 @@ function toSlug(name: string): string {
     .slice(0, 30)
 }
 
-// ─────────────────────────────────────────────────────────────
-//  CreateOrgModal
-//
-//  Props:
-//   open     — controlled open state
-//   onClose  — close callback
-//   variant  — 'default' (small button) | 'prominent' (large CTA for empty state)
-//
-//  The modal is decoupled from its trigger — callers control
-//  open/close state and pass in a trigger element separately.
-// ─────────────────────────────────────────────────────────────
 
 interface CreateOrgModalProps {
   open:    boolean
@@ -64,13 +53,7 @@ interface CreateOrgModalProps {
 export function CreateOrgModal({ open, onClose }: CreateOrgModalProps) {
   const id        = useId()
   const createOrg = useCreateOrganization()
-
-  // Tracks the auto-derived slug internally — NOT written to the form in real-time.
-  // It is only flushed into the input when the user focuses the slug field,
-  // so the placeholder is clean while the user is still typing the name.
   const [derivedSlug, setDerivedSlug] = useState('')
-  // Tracks whether the user has manually typed in the slug field.
-  // If true, we stop overwriting their edits on focus.
   const slugUserEdited = useRef(false)
 
   const {
@@ -85,14 +68,11 @@ export function CreateOrgModal({ open, onClose }: CreateOrgModalProps) {
     defaultValues: { name: '', slug: '' },
   })
 
-  // Derive slug from name silently — only update local state, not the form field.
   const name = watch('name')
   useEffect(() => {
     setDerivedSlug(toSlug(name))
   }, [name])
 
-  // When slug field is focused, flush the derived slug into the input
-  // (only if the user hasn't manually edited it yet).
   function handleSlugFocus() {
     if (!slugUserEdited.current && derivedSlug) {
       setValue('slug', derivedSlug, { shouldValidate: false })
@@ -189,9 +169,6 @@ export function CreateOrgModal({ open, onClose }: CreateOrgModalProps) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
-//  NewOrgButton — small inline trigger (used beside section headings)
-// ─────────────────────────────────────────────────────────────
 interface NewOrgButtonProps {
   onClick: () => void
 }
@@ -212,9 +189,6 @@ export function NewOrgButton({ onClick }: NewOrgButtonProps) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
-//  ProminentCreateButton — large CTA for the empty state view
-// ─────────────────────────────────────────────────────────────
 interface ProminentCreateButtonProps {
   onClick: () => void
 }

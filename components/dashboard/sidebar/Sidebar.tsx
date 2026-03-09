@@ -5,9 +5,6 @@ import { LayoutDashboard, KanbanSquare, Users, ChevronLeft } from 'lucide-react'
 import { NavItem } from './NavItem'
 import type { Organization } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Sidebar — left navigation panel for an org workspace.
-// ─────────────────────────────────────────────────────────────
 
 interface SidebarProps {
   org: Organization

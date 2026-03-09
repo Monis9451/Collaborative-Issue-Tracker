@@ -1,15 +1,4 @@
--- ─────────────────────────────────────────────────────────────
 -- Patch 003 — add_org_member RPC
---
--- Allows an org admin to invite a user by email.
--- Steps:
---   1. Verify the calling user is an admin of the org
---   2. Look up the profile by email (only registered users)
---   3. Raise 'user_not_found' if no profile found
---   4. Raise 'already_member' if the user is already in the org
---   5. Insert the new org member with role = 'member'
---   6. Return the new member row as JSON
--- ─────────────────────────────────────────────────────────────
 
 create or replace function public.add_org_member(
   p_email  text,

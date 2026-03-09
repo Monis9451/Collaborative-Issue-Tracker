@@ -1,14 +1,6 @@
 import type { ReactNode } from 'react'
 import { Building2 } from 'lucide-react'
 
-// ─────────────────────────────────────────────────────────────
-//  OrgEmptyState — shown when the user belongs to no orgs.
-//
-//  Centers the icon, headline, description and a CTA slot
-//  vertically in the available space. The CTA slot accepts
-//  a "Create Organization" button from the parent.
-// ─────────────────────────────────────────────────────────────
-
 interface OrgEmptyStateProps {
   /** Rendered below the description — pass the CreateOrgModal trigger here */
   action: ReactNode

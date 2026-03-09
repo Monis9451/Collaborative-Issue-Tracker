@@ -18,6 +18,7 @@ import { TicketDetail } from '@/components/dashboard/tickets/TicketDetail'
 import { CreateTicketModal } from '@/components/dashboard/tickets/CreateTicketModal'
 import { useTickets } from '@/hooks/useTickets'
 import { useUpdateTicketStatus } from '@/hooks/useUpdateTicket'
+import { useTicketsRealtime } from '@/hooks/useTicketsRealtime'
 import type { TicketWithProfiles, TicketStatus, AppRole } from '@/types/database'
 
 // ─────────────────────────────────────────────────────────────
@@ -35,17 +36,10 @@ interface KanbanBoardProps {
 export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps) {
   const { data: tickets = [], isLoading, isError } = useTickets(orgId)
   const updateStatus = useUpdateTicketStatus(orgId)
-
-  // ── Selected ticket (slide-over) ─────────────────────────
+  useTicketsRealtime(orgId)
   const [selectedTicket, setSelectedTicket] = useState<TicketWithProfiles | null>(null)
-
-  // ── Create ticket modal ───────────────────────────────────
   const [createOpen, setCreateOpen] = useState(false)
-
-  // ── Active drag id (for DragOverlay) ─────────────────────
   const [activeId, setActiveId] = useState<string | null>(null)
-
-  // ── Group tickets by status (exclude the card being dragged) ─
   const columns = useMemo(() => {
     const PRIORITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 }
     const map: Record<TicketStatus, TicketWithProfiles[]> = {
@@ -69,7 +63,6 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
     [activeId, tickets],
   )
 
-  // ── DnD sensors ──────────────────────────────────────────
   const sensors = useSensors(
     // Mouse / trackpad only — mobile uses the 3-dot move menu instead
     useSensor(PointerSensor, {
@@ -77,7 +70,6 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
     }),
   )
 
-  // ── Mobile move handler (3-dot menu) ─────────────────────────────
   const handleMoveStatus = useCallback(
     (ticketId: string, status: TicketStatus) => {
       updateStatus.mutate({ ticketId, status })
@@ -115,9 +107,6 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
         return
       }
 
-      // Fire optimistic update first, then clear the overlay in the next
-      // micro-task so TanStack Query's onMutate (cancelQueries + setQueryData)
-      // runs before the card is revealed in the source column.
       updateStatus.mutate({ ticketId, status: targetStatus })
       setTimeout(() => setActiveId(null), 0)
     },
@@ -172,9 +161,6 @@ export function KanbanBoard({ orgId, currentUserId, userRole }: KanbanBoardProps
         </button>
       </div>
 
-      {/* ── Kanban columns ───────────────────────────────────── */}
-      {/* Mobile: vertical scroll — columns stack, no gesture conflict with DnD. */}
-      {/* Desktop: horizontal scroll with fixed-height columns.                  */}
       <div className="flex-1 overflow-y-auto md:overflow-x-auto md:overflow-y-hidden">
         <DndContext
           sensors={sensors}

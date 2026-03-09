@@ -1,10 +1,5 @@
 import { type ReactNode } from 'react'
 
-// ─────────────────────────────────────────────────────────────
-//  AuthCard — white rounded card used on all auth pages.
-//  Renders the app logo, a page title, and any children (forms).
-// ─────────────────────────────────────────────────────────────
-
 interface AuthCardProps {
   title:    string
   children: ReactNode

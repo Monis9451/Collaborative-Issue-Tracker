@@ -5,15 +5,6 @@ import { LogOut, User } from 'lucide-react'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { useSignOut } from '@/hooks/useSignOut'
 
-// ─────────────────────────────────────────────────────────────
-//  DashboardHeader — top navigation bar for all dashboard pages.
-//
-//  Shows:
-//   · Logo / app name (links to /dashboard)
-//   · Current user's name (from profile)
-//   · Sign-out button
-// ─────────────────────────────────────────────────────────────
-
 export function DashboardHeader() {
   const { data: profile } = useCurrentUser()
   const signOut           = useSignOut()

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
 import { MembersPageClient } from '@/components/dashboard/members/MembersPageClient'
 
-// ─────────────────────────────────────────────────────────────
 //  Org Members Page
-// ─────────────────────────────────────────────────────────────
 
 type Params = Promise<{ orgSlug: string }>
 

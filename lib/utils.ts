@@ -1,26 +1,10 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-/**
- * cn — merge Tailwind classes cleanly.
- *
- * Combines clsx (conditional classes) with tailwind-merge
- * (deduplicates conflicting Tailwind utilities).
- *
- * Usage:
- *   cn('px-4 py-2', isActive && 'bg-brand-700', className)
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/**
- * formatDate — human-readable date string.
- * Used on ticket cards, member joined dates, etc.
- *
- * formatDate('2026-03-06T10:00:00Z')  → "Mar 6, 2026"
- * formatDate('2026-03-06T10:00:00Z', { relative: true })  → "2 days ago"
- */
 export function formatDate(
   dateStr: string | null | undefined,
   options: { relative?: boolean } = {}
@@ -52,12 +36,6 @@ export function formatDate(
   })
 }
 
-/**
- * slugify — converts a string to a URL-safe slug.
- * Used when creating a new organization.
- *
- * slugify('Acme Corp!')  → 'acme-corp'
- */
 export function slugify(str: string): string {
   return str
     .toLowerCase()

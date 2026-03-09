@@ -3,16 +3,6 @@ import { Settings, Users, Trash2 } from 'lucide-react'
 import type { AppRole, Organization } from '@/types/database'
 import { cn } from '@/lib/utils'
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//  OrgCard â€” clickable card representing a single organization.
-//
-//  Admin card:  shows "Admin" badge + trash icon + settings hint.
-//  Member card: simpler, no admin controls.
-//
-//  Clicking the card navigates to the workspace.
-//  The trash button stops propagation so it never navigates.
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
 interface OrgCardProps {
   organization:   Organization
   role:           AppRole
@@ -49,7 +39,6 @@ export function OrgCard({ organization, role, onDeleteClick }: OrgCardProps) {
           'block',
         )}
       >
-        {/* â”€â”€ Top row: avatar + badge (+ trash for admins) â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="flex items-start justify-between">
           {/* Org avatar */}
           <div
@@ -90,7 +79,7 @@ export function OrgCard({ organization, role, onDeleteClick }: OrgCardProps) {
           </div>
         </div>
 
-        {/* â”€â”€ Org info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        
         <div className="flex flex-col gap-0.5">
           <h3 className="line-clamp-1 text-sm font-bold text-text-primary
                          group-hover:text-jira-blue transition-colors">
@@ -99,7 +88,6 @@ export function OrgCard({ organization, role, onDeleteClick }: OrgCardProps) {
           <p className="text-xs text-text-muted">/{organization.slug}</p>
         </div>
 
-        {/* â”€â”€ Footer hint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         {isAdmin ? (
           <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-muted">
             <Settings className="h-3 w-3" strokeWidth={1.8} />

@@ -7,14 +7,6 @@ import type { CreateOrgInput } from '@/lib/orgs/actions'
 
 export type { CreateOrgInput }
 
-// ─────────────────────────────────────────────────────────────
-//  useCreateOrganization
-//
-//  Delegates to a Server Action which calls a SECURITY DEFINER
-//  Postgres function via rpc(). This sidesteps the PostgREST
-//  ES256 JWT re-verification bug that causes auth.uid() = NULL
-//  at the RLS policy layer.
-// ─────────────────────────────────────────────────────────────
 
 export function useCreateOrganization() {
   const queryClient = useQueryClient()
