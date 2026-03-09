@@ -80,3 +80,197 @@ create table public.ticket_comments (
 );
 
 create index idx_comments_ticket on public.ticket_comments (ticket_id);
+```
+
+### Row Level Security (RLS) Policies
+
+```sql
+alter table public.profiles             enable row level security;
+alter table public.organizations        enable row level security;
+alter table public.organization_members enable row level security;
+alter table public.tickets              enable row level security;
+alter table public.ticket_comments      enable row level security;
+
+-- profiles
+create policy "profiles: authenticated users can read all"
+  on public.profiles for select
+  to authenticated
+  using (true);
+
+create policy "profiles: users insert own row"
+  on public.profiles for insert
+  to authenticated
+  with check (id = auth.uid());
+
+create policy "profiles: users update own row"
+  on public.profiles for update
+  to authenticated
+  using  (id = auth.uid())
+  with check (id = auth.uid());
+
+-- organizations
+create policy "orgs: members can read"
+  on public.organizations for select
+  to authenticated
+  using (public.is_org_member(id));
+
+create policy "orgs: authenticated users can create"
+  on public.organizations for insert
+  to authenticated
+  with check (created_by = auth.uid());
+
+create policy "orgs: admins can update"
+  on public.organizations for update
+  to authenticated
+  using  (public.is_org_admin(id))
+  with check (public.is_org_admin(id));
+
+create policy "orgs: admins can delete"
+  on public.organizations for delete
+  to authenticated
+  using (public.is_org_admin(id));
+
+-- organization_members
+create policy "members: org members can read"
+  on public.organization_members for select
+  to authenticated
+  using (public.is_org_member(organization_id));
+
+create policy "members: admins can insert"
+  on public.organization_members for insert
+  to authenticated
+  with check (
+    public.is_org_admin(organization_id)
+    or
+    (
+      user_id = auth.uid()
+      and role = 'admin'
+      and not exists (
+        select 1 from public.organization_members
+        where organization_id = organization_members.organization_id
+      )
+    )
+  );
+
+create policy "members: admins can update roles"
+  on public.organization_members for update
+  to authenticated
+  using  (public.is_org_admin(organization_id))
+  with check (public.is_org_admin(organization_id));
+
+create policy "members: admins can delete"
+  on public.organization_members for delete
+  to authenticated
+  using (public.is_org_admin(organization_id));
+
+-- tickets
+create policy "tickets: org members can read"
+  on public.tickets for select
+  to authenticated
+  using (
+    public.is_org_member(organization_id)
+    and deleted_at is null
+  );
+
+create policy "tickets: org members can create"
+  on public.tickets for insert
+  to authenticated
+  with check (
+    public.is_org_member(organization_id)
+    and created_by = auth.uid()
+    and (
+      assignee_id is null
+      or exists (
+        select 1 from public.organization_members om
+        where om.organization_id = tickets.organization_id
+        and   om.user_id         = assignee_id
+      )
+    )
+  );
+
+create policy "tickets: update — admin full, member own"
+  on public.tickets for update
+  to authenticated
+  using (
+    public.is_org_admin(organization_id)
+    or
+    (public.is_org_member(organization_id) and assignee_id = auth.uid())
+  )
+  with check (
+    (
+      public.is_org_admin(organization_id)
+      or
+      (public.is_org_member(organization_id) and assignee_id = auth.uid())
+    )
+    and (
+      assignee_id is null
+      or exists (
+        select 1 from public.organization_members om
+        where om.organization_id = tickets.organization_id
+        and   om.user_id         = assignee_id
+      )
+    )
+  );
+
+create policy "tickets: delete — admins only"
+  on public.tickets for delete
+  to authenticated
+  using (public.is_org_admin(organization_id));
+
+-- ticket_comments
+create policy "comments: org members can read"
+  on public.ticket_comments for select
+  to authenticated
+  using (
+    exists (
+      select 1 from public.tickets t
+      where  t.id = ticket_id
+      and    public.is_org_member(t.organization_id)
+      and    t.deleted_at is null
+    )
+  );
+
+create policy "comments: org members can create"
+  on public.ticket_comments for insert
+  to authenticated
+  with check (
+    author_id = auth.uid()
+    and exists (
+      select 1 from public.tickets t
+      where  t.id = ticket_id
+      and    public.is_org_member(t.organization_id)
+      and    t.deleted_at is null
+    )
+  );
+
+create policy "comments: author or admin can update"
+  on public.ticket_comments for update
+  to authenticated
+  using (
+    author_id = auth.uid()
+    or exists (
+      select 1 from public.tickets t
+      where t.id = ticket_id
+      and   public.is_org_admin(t.organization_id)
+    )
+  )
+  with check (
+    author_id = auth.uid()
+    or exists (
+      select 1 from public.tickets t
+      where t.id = ticket_id
+      and   public.is_org_admin(t.organization_id)
+    )
+  );
+
+create policy "comments: author or admin can delete"
+  on public.ticket_comments for delete
+  to authenticated
+  using (
+    author_id = auth.uid()
+    or exists (
+      select 1 from public.tickets t
+      where t.id = ticket_id
+      and   public.is_org_admin(t.organization_id)
+    )
+  );
