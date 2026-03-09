@@ -14,6 +14,49 @@ https://collaborative-issue-tracker-sigma.vercel.app
 
 Run the following in the **Supabase SQL Editor** (Dashboard → SQL Editor → New query).
 
+## Environment Variables
+
+Create a `.env.local` file in the project root and add the following:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Find both values in your Supabase project under **Project Settings → API**:
+- **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
+- **anon / public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+> `.env.local` is gitignored — never commit it.
+
+## Run Locally
+
+### 1. Clone & install
+
+```bash
+git clone https://github.com/Monis9451/Collaborative-Issue-Tracker.git
+cd Collaborative-Issue-Tracker/cit
+npm install
+```
+
+### 2. Add environment variables
+
+Create `.env.local` in the project root with the variables listed above.
+
+### 3. Set up the database
+
+Run the following in the **Supabase SQL Editor** (Dashboard → SQL Editor → New query).
+
+### 4. Start the dev server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
 ### Tables, Enums & Triggers
 
 ```sql
