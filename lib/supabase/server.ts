@@ -1,23 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { type Database } from '@/types/database'
-
-/**
- * Server-side Supabase client.
- *
- * Use this inside:
- *   - Server Components (RSC)
- *   - API Route Handlers (route.ts)
- *   - Server Actions
- *   - middleware.ts (see middleware helper below)
- *
- * It reads & writes the session cookie via next/headers, keeping
- * the session alive without any client-side JS.
- *
- * Usage:
- *   import { createClient } from '@/lib/supabase/server'
- *   const supabase = await createClient()
- */
 export async function createClient() {
   const cookieStore = await cookies()
 

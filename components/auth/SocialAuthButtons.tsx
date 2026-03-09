@@ -1,11 +1,5 @@
 'use client'
 
-// ─────────────────────────────────────────────────────────────
-//  SocialAuthButtons — Google, Apple, and X (Twitter) sign-in.
-//  OAuth providers must be enabled in Supabase Dashboard first.
-//  Currently DISABLED — showing "Coming Soon" state.
-// ─────────────────────────────────────────────────────────────
-
 interface SocialButtonProps {
   children:  React.ReactNode
   ariaLabel: string

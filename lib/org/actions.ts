@@ -2,9 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-// ─────────────────────────────────────────────────────────────
-//  Org Server Actions
-// ─────────────────────────────────────────────────────────────
 
 const ERROR_MESSAGES: Record<string, string> = {
   not_authenticated: 'You must be signed in.',

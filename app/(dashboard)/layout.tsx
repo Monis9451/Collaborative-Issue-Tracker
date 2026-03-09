@@ -3,15 +3,6 @@ import { getAuthUser } from '@/lib/auth/actions'
 import { type ReactNode } from 'react'
 import { DashboardHeader } from '@/components/dashboard/layout/DashboardHeader'
 
-// ─────────────────────────────────────────────────────────────
-//  Dashboard Group Layout — Server Component (no 'use client').
-//
-//  Two-layer security model:
-//   Layer 1: proxy.ts     — edge check, fast redirect before page loads
-//   Layer 2: This layout  — server-side verify before rendering any
-//                           dashboard UI (defence-in-depth)
-// ─────────────────────────────────────────────────────────────
-
 interface DashboardLayoutProps {
   children: ReactNode
 }

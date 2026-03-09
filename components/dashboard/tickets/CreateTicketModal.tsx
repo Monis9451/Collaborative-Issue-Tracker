@@ -3,11 +3,6 @@
 import { Modal } from '@/components/ui/Modal'
 import { TicketForm } from '@/components/dashboard/tickets/TicketForm'
 
-// ─────────────────────────────────────────────────────────────
-//  CreateTicketModal — dialog for creating a new ticket,
-//  matching the same UX pattern as CreateOrgModal.
-// ─────────────────────────────────────────────────────────────
-
 interface CreateTicketModalProps {
   open:    boolean
   onClose: () => void

@@ -22,23 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    /**
-     * suppressHydrationWarning — required because the inline dark-mode script
-     * below modifies the <html> className before React hydrates. Without this,
-     * React warns about a class mismatch between server and client.
-     */
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/*
-         * Dark mode anti-flash script.
-         * Runs synchronously before the first paint so there is never a
-         * white flash when the user's preference is dark mode.
-         *
-         * Logic:
-         *   1. Check localStorage for an explicit user choice ("dark" / "light")
-         *   2. Fall back to the OS/browser preference (prefers-color-scheme)
-         *   3. Apply .dark or .light class to <html> immediately
-         */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){

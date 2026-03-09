@@ -5,12 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { AppRole } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  useUserRole
-//  Returns the current user's role in a specific org ('admin'
-//  | 'member' | null).  null means not a member.
-// ─────────────────────────────────────────────────────────────
-
 async function fetchUserRole(orgId: string): Promise<AppRole | null> {
   const supabase = createClient()
 

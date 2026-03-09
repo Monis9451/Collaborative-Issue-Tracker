@@ -12,11 +12,6 @@ import { FormField } from '@/components/ui/FormField'
 import { Button } from '@/components/ui/button'
 import { Alert } from '@/components/ui/Alert'
 
-// ─────────────────────────────────────────────────────────────
-//  RegisterForm — react-hook-form + Zod + useSignUp mutation.
-//  Staggered field animation via framer-motion.
-//  Pill-shaped inputs for the split-card auth design.
-// ─────────────────────────────────────────────────────────────
 
 export function RegisterForm() {
   const id      = useId()

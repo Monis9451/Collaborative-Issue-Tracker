@@ -2,17 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 
-/**
- * Auth Callback Route Handler
- *
- * Supabase redirects here after:
- *  - Email confirmation links
- *  - Magic link sign-ins
- *  - OAuth provider callbacks (Google, etc.)
- *
- * This handler exchanges the `code` query param for a session
- * and sets the secure session cookie via @supabase/ssr.
- */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code  = searchParams.get('code')
@@ -45,6 +34,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Exchange failed or no code — redirect to login with an error hint
   return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`)
 }

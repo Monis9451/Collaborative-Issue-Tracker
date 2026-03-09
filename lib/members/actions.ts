@@ -2,9 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-// ─────────────────────────────────────────────────────────────
-//  Member Server Actions
-// ─────────────────────────────────────────────────────────────
 
 const ERROR_MESSAGES: Record<string, string> = {
   user_not_found:      'No account found with that email address.',

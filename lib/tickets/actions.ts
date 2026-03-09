@@ -3,14 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Ticket, TicketStatus, TicketPriority } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Ticket Server Actions
-//
-//  All mutations go through SECURITY DEFINER RPC functions to
-//  bypass the PostgREST ES256 JWT re-verification bug
-//  (auth.uid() returns NULL in RLS WITH CHECK clauses).
-// ─────────────────────────────────────────────────────────────
-
 export interface CreateTicketInput {
   orgId:       string
   title:       string

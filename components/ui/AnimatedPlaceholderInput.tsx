@@ -64,9 +64,7 @@ export const AnimatedPlaceholderInput = forwardRef<
       },
       [onChange]
     )
-
-    // outer div: relative (anchors the eye button, not overflow-hidden)
-    // inner div: overflow-hidden (clips the sliding placeholder span)
+    
     return (
       <div className="relative">
         <div className="overflow-hidden rounded-full">

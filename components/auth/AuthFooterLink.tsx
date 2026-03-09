@@ -1,11 +1,5 @@
 import Link from 'next/link'
 
-// ─────────────────────────────────────────────────────────────
-//  AuthFooterLink — the "Don't have an account? Register" /
-//  "Already have an account? Sign in" link at the bottom of
-//  each auth card. Keeps the repetitive pattern in one place.
-// ─────────────────────────────────────────────────────────────
-
 interface AuthFooterLinkProps {
   prompt: string
   label:  string

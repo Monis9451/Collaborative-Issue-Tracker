@@ -1,17 +1,6 @@
--- =============================================================
--- Collaborative Issue Tracker — Full Database Schema
--- Run this entire file in the Supabase SQL Editor (once)
--- =============================================================
-
--- =============================================================
--- 0. EXTENSIONS
--- =============================================================
 create extension if not exists "pgcrypto";   -- gen_random_uuid()
 
-
--- =============================================================
 -- 1. CUSTOM ENUM TYPES
--- =============================================================
 
 -- Role a user can hold inside one organization
 create type app_role as enum ('admin', 'member');
@@ -22,16 +11,8 @@ create type ticket_status as enum ('open', 'in_progress', 'closed');
 -- Urgency/importance of a ticket
 create type ticket_priority as enum ('low', 'medium', 'high');
 
-
--- =============================================================
 -- 2. TABLES
--- =============================================================
 
--- ------------------------------------------------------------
--- 2a. profiles
---     Mirror of auth.users — stores public-facing user info.
---     A row is auto-inserted by a trigger when a user signs up.
--- ------------------------------------------------------------
 create table public.profiles (
   id          uuid        primary key references auth.users (id) on delete cascade,
   email       text        not null unique,
@@ -41,10 +22,7 @@ create table public.profiles (
   updated_at  timestamptz not null default now()
 );
 
--- ------------------------------------------------------------
 -- 2b. organizations
---     A workspace / team that owns tickets.
--- ------------------------------------------------------------
 create table public.organizations (
   id          uuid        primary key default gen_random_uuid(),
   name        text        not null,
@@ -53,11 +31,7 @@ create table public.organizations (
   created_at  timestamptz not null default now()
 );
 
--- ------------------------------------------------------------
 -- 2c. organization_members
---     Junction table: user ↔ org with role assignment.
---     UNIQUE(organization_id, user_id) prevents duplicate rows.
--- ------------------------------------------------------------
 create table public.organization_members (
   id               uuid        primary key default gen_random_uuid(),
   organization_id  uuid        not null references public.organizations (id) on delete cascade,
@@ -69,11 +43,7 @@ create table public.organization_members (
   constraint uq_org_user unique (organization_id, user_id)
 );
 
--- ------------------------------------------------------------
 -- 2d. tickets
---     Core entity.  deleted_at enables soft-delete so records
---     are hidden from views but kept for audit / restore.
--- ------------------------------------------------------------
 create table public.tickets (
   id               uuid            primary key default gen_random_uuid(),
   organization_id  uuid            not null references public.organizations (id) on delete cascade,
@@ -96,11 +66,7 @@ create index idx_tickets_org_active  on public.tickets (organization_id) where d
 create index idx_tickets_assignee    on public.tickets (assignee_id)    where deleted_at is null;
 create index idx_tickets_status      on public.tickets (organization_id, status) where deleted_at is null;
 
--- ------------------------------------------------------------
 -- 2e. ticket_comments
---     Comments on a ticket.  Deleting the parent ticket
---     cascades and removes all comments automatically.
--- ------------------------------------------------------------
 create table public.ticket_comments (
   id          uuid        primary key default gen_random_uuid(),
   ticket_id   uuid        not null references public.tickets (id) on delete cascade,
@@ -111,16 +77,7 @@ create table public.ticket_comments (
 
 create index idx_comments_ticket on public.ticket_comments (ticket_id);
 
-
--- =============================================================
 -- 3. UTILITY FUNCTIONS
---    These are SECURITY DEFINER helpers used inside RLS policies.
---    Marking them stable + security definer avoids re-computing
---    the same join on every row.
--- =============================================================
-
--- Returns the role of the calling user inside a given org,
--- or NULL if they are not a member.
 create or replace function public.get_user_role(org_id uuid)
 returns app_role
 language sql
@@ -169,13 +126,8 @@ as $$
 $$;
 
 
--- =============================================================
 -- 4. TRIGGERS
--- =============================================================
-
--- ------------------------------------------------------------
 -- 4a. Auto-create a profile row when a new auth user signs up
--- ------------------------------------------------------------
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -199,10 +151,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
-
--- ------------------------------------------------------------
 -- 4b. Keep updated_at current on profiles and tickets
--- ------------------------------------------------------------
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -222,9 +171,7 @@ create trigger trg_tickets_updated_at
   for each row execute procedure public.set_updated_at();
 
 
--- ------------------------------------------------------------
 -- 4c. Keep tickets.comments_count in sync automatically
--- ------------------------------------------------------------
 create or replace function public.update_comments_count()
 returns trigger
 language plpgsql
@@ -251,13 +198,7 @@ create trigger trg_comments_count
   after insert or delete on public.ticket_comments
   for each row execute procedure public.update_comments_count();
 
-
--- =============================================================
 -- 5. ROW LEVEL SECURITY (RLS)
---    Enable RLS on every table, then define fine-grained policies.
---    Because RLS is on, any row not matched by a policy is
---    invisible / rejected — even direct API calls are blocked.
--- =============================================================
 
 alter table public.profiles             enable row level security;
 alter table public.organizations        enable row level security;
@@ -265,10 +206,7 @@ alter table public.organization_members enable row level security;
 alter table public.tickets              enable row level security;
 alter table public.ticket_comments      enable row level security;
 
-
--- ============================================================
 -- profiles policies
--- ============================================================
 
 -- Any authenticated user can view profiles
 -- (needed to show assignee names, member lists, etc.)
@@ -291,9 +229,7 @@ create policy "profiles: users update own row"
   with check (id = auth.uid());
 
 
--- ============================================================
 -- organizations policies
--- ============================================================
 
 -- Only members of an org can see it
 create policy "orgs: members can read"
@@ -320,10 +256,7 @@ create policy "orgs: admins can delete"
   to authenticated
   using (public.is_org_admin(id));
 
-
--- ============================================================
 -- organization_members policies
--- ============================================================
 
 -- All members of an org can see the member list
 create policy "members: org members can read"
@@ -363,10 +296,7 @@ create policy "members: admins can delete"
   to authenticated
   using (public.is_org_admin(organization_id));
 
-
--- ============================================================
 -- tickets policies
--- ============================================================
 
 -- Any org member can read non-deleted tickets in their org
 create policy "tickets: org members can read"
@@ -430,10 +360,7 @@ create policy "tickets: delete — admins only"
   to authenticated
   using (public.is_org_admin(organization_id));
 
-
--- ============================================================
 -- ticket_comments policies
--- ============================================================
 
 -- Any org member of the parent ticket's org can read comments
 create policy "comments: org members can read"
@@ -498,12 +425,7 @@ create policy "comments: author or admin can delete"
   );
 
 
--- =============================================================
 -- 6. REALTIME
---    Enable Postgres Realtime on the tickets table so that
---    TanStack Query cache can be invalidated immediately when
---    another user creates, updates, or deletes a ticket.
--- =============================================================
 
 -- Add tickets and ticket_comments to the realtime publication
 alter publication supabase_realtime add table public.tickets;

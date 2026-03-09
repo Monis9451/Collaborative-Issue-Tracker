@@ -4,10 +4,6 @@ import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { useCreateComment } from '@/hooks/useCreateComment'
 
-// ─────────────────────────────────────────────────────────────
-//  CommentModal — dialog for adding a comment to a ticket.
-// ─────────────────────────────────────────────────────────────
-
 interface CommentModalProps {
   open:     boolean
   onClose:  () => void

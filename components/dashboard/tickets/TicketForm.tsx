@@ -9,17 +9,6 @@ import { useUpdateTicket } from '@/hooks/useUpdateTicket'
 import { useOrgMembers } from '@/hooks/useOrgMembers'
 import type { TicketWithProfiles, TicketPriority } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Schema
-// ─────────────────────────────────────────────────────────────
-
-/**
- * In create mode (originalDueDate = undefined): any non-empty due date must be
- * today or later.
- * In edit mode: the original due date is always allowed unchanged (so admins
- * aren't forced to update a date they didn't touch); any *new* date still must
- * be today or later.
- */
 function makeTicketSchema(originalDueDate?: string | null) {
   const today = new Date().toISOString().split('T')[0]
   return z.object({

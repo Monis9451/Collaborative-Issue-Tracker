@@ -1,9 +1,3 @@
-// =============================================================
-// Supabase Database TypeScript Types
-// Generated to match schema.sql exactly.
-// Keep this in sync if you alter tables.
-// =============================================================
-
 export type AppRole       = 'admin' | 'member'
 export type TicketStatus  = 'open'  | 'in_progress' | 'closed'
 export type TicketPriority = 'low'  | 'medium'       | 'high'

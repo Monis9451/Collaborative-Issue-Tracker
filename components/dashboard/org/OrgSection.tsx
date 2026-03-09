@@ -2,11 +2,6 @@ import type { ReactNode } from 'react'
 import { OrgCard } from '@/components/dashboard/org/OrgCard'
 import type { OrgWithRole } from '@/hooks/useOrganizations'
 
-// ─────────────────────────────────────────────────────────────
-//  OrgSection — labeled section containing a grid of OrgCards.
-//  Renders nothing when the `orgs` array is empty.
-// ─────────────────────────────────────────────────────────────
-
 interface OrgSectionProps {
   title:           string
   subtitle?:       string

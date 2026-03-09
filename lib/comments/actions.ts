@@ -3,13 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { TicketComment } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Comment Server Actions
-//  All mutations via SECURITY DEFINER RPC (see patch_002 SQL).
-// ─────────────────────────────────────────────────────────────
-
-// ── Create ────────────────────────────────────────────────────
-
 export async function createCommentAction(
   ticketId: string,
   body:     string,

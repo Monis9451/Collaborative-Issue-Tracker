@@ -4,9 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { addOrgMemberAction } from '@/lib/members/actions'
 
-// ─────────────────────────────────────────────────────────────
-//  useAddOrgMember
-// ─────────────────────────────────────────────────────────────
 
 export function useAddOrgMember(orgId: string) {
   const queryClient = useQueryClient()

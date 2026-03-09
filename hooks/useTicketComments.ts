@@ -5,10 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { TicketComment, Profile } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  useTicketComments
-//  Fetches all comments for a ticket, with author profile.
-// ─────────────────────────────────────────────────────────────
 
 export interface CommentWithAuthor extends TicketComment {
   author: Profile

@@ -5,24 +5,6 @@ import Link from 'next/link'
 import { type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-// ─────────────────────────────────────────────────────────────
-//  AuthSplitCard — split-panel auth card.
-//
-//  Layout:
-//   ┌─────────────────────┬──────────────────┐
-//   │  Left: Form Panel   │  Right: CTA Panel│  ctaPosition="right" (login)
-//   └─────────────────────┴──────────────────┘
-//
-//   ┌──────────────────┬─────────────────────┐
-//   │  Left: CTA Panel │  Right: Form Panel  │  ctaPosition="left" (register)
-//   └──────────────────┴─────────────────────┘
-//
-//  - ctaPosition="right" → blue panel slides in from right (login)
-//  - ctaPosition="left"  → blue panel slides in from left  (register)
-//  - Blue panel: rounded corners on the form-facing edge, sharp on outer edge
-//  - Right panel is hidden on mobile (form stacks full-width)
-// ─────────────────────────────────────────────────────────────
-
 interface AuthSplitCardProps {
   formTitle:      string
   ctaTitle:       string

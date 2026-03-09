@@ -5,11 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// ─────────────────────────────────────────────────────────────
-//  SlideOver — right-side slide-in panel backed by an overlay.
-//  Used for ticket detail.
-// ─────────────────────────────────────────────────────────────
-
 interface SlideOverProps {
   open:     boolean
   onClose:  () => void

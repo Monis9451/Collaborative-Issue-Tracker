@@ -1,17 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-/**
- * middleware.ts — Next.js edge middleware.
- *
- * Must be named `middleware.ts` at the project root so Next.js
- * automatically picks it up as the edge handler.
- *
- * Responsibilities:
- *  1. Refresh the Supabase session cookie on every request.
- *  2. Redirect unauthenticated users hitting /dashboard → /login.
- *  3. Redirect authenticated users hitting /login or /register → /dashboard.
- */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -36,8 +25,6 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // ⚠️  Do NOT add any logic between createServerClient and getUser().
-  //     getUser() must run immediately to refresh the session token.
   const {
     data: { user },
   } = await supabase.auth.getUser()

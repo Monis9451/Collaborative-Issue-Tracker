@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-/*
- * ─────────────────────────────────────────────────────────────
- *  Jira-inspired Design Tokens
- *  Light theme only — consistent with Jira's default palette.
- *  Font: Nunito (loaded via next/font in layout.tsx)
- * ─────────────────────────────────────────────────────────────
- */
 @theme {
   /* ── Brand Blues (Jira core palette) ─────────────────────── */
   --color-jira-blue:        #0052CC;   /* Primary actions, links  */

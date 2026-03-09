@@ -1,11 +1,6 @@
 import { forwardRef, type InputHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-// ─────────────────────────────────────────────────────────────
-//  Input — Jira-styled text input primitive.
-//  Passes all native <input> props through.
-//  hasError: applies red border + background for validation states.
-// ─────────────────────────────────────────────────────────────
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hasError?: boolean

@@ -1,17 +1,3 @@
--- =============================================================
--- PATCH: Validate assignee_id belongs to the same organization
--- =============================================================
--- Run this in Supabase SQL Editor AFTER the initial schema.sql
---
--- Problem: The original INSERT and UPDATE policies allowed
--- assignee_id to be any UUID, including users outside the org.
---
--- Fix: Both policies now include a WITH CHECK clause that
--- ensures assignee_id is either NULL or exists as a member
--- of the ticket's organization.
--- =============================================================
-
-
 -- ── 1. Fix the INSERT (create ticket) policy ─────────────────
 
 drop policy if exists "tickets: org members can create" on public.tickets;
@@ -37,8 +23,6 @@ create policy "tickets: org members can create"
 
 
 -- ── 2. Fix the UPDATE (edit ticket) policy ───────────────────
--- Same gap exists here: an admin could reassign a ticket to an
--- outsider.  The WITH CHECK now validates the new assignee_id.
 
 drop policy if exists "tickets: update — admin full, member own" on public.tickets;
 

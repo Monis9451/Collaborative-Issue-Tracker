@@ -1,11 +1,5 @@
 import { z } from 'zod'
 
-// ─────────────────────────────────────────────────────────────
-//  Auth Zod Schemas
-//  Single source of truth for validation on both client (RHF)
-//  and server (actions.ts). Inferred TS types come from here.
-// ─────────────────────────────────────────────────────────────
-
 export const loginSchema = z.object({
   email: z
     .string()

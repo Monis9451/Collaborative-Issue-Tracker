@@ -2,18 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-// ─────────────────────────────────────────────────────────────
-//  Auth Server Actions — 'use server' makes these callable from
-//  both Server Components and client-side useMutation hooks.
-//  Functions throw Error on failure so TanStack Query's
-//  mutation.error / mutation.isError work naturally.
-// ─────────────────────────────────────────────────────────────
-
-/**
- * Sign in with email and password.
- * Supabase sets a secure httpOnly session cookie via @supabase/ssr.
- * Throws a user-friendly Error on failure.
- */
 export async function signInWithEmail(
   email: string,
   password: string
@@ -33,12 +21,6 @@ export async function signInWithEmail(
   }
 }
 
-/**
- * Register a new user.
- * Creates the auth.users record. The `profiles` row is automatically
- * inserted by the Supabase DB trigger `handle_new_user` defined in schema.sql.
- * Throws a user-friendly Error on failure.
- */
 export async function signUpWithEmail(
   email: string,
   password: string,
@@ -65,10 +47,6 @@ export async function signUpWithEmail(
   }
 }
 
-/**
- * Sign out the current user and clear the session cookie.
- * Throws on failure.
- */
 export async function signOut(): Promise<void> {
   const supabase = await createClient()
 
@@ -79,11 +57,6 @@ export async function signOut(): Promise<void> {
   }
 }
 
-/**
- * Get the currently authenticated user (server-side).
- * Safe to call in Server Components, API routes, and middleware.
- * Returns null if no active session — never throws.
- */
 export async function getAuthUser() {
   const supabase = await createClient()
 

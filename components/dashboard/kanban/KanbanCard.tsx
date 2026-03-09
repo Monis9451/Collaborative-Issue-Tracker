@@ -10,10 +10,6 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import type { TicketWithProfiles, TicketStatus } from '@/types/database'
 import { format } from 'date-fns'
 
-// ─────────────────────────────────────────────────────────────
-//  Column display labels
-// ─────────────────────────────────────────────────────────────
-
 const STATUS_LABELS: Record<TicketStatus, string> = {
   open:        'Open',
   in_progress: 'In Progress',
@@ -22,10 +18,6 @@ const STATUS_LABELS: Record<TicketStatus, string> = {
 
 const ALL_STATUSES: TicketStatus[] = ['open', 'in_progress', 'closed']
 
-// ─────────────────────────────────────────────────────────────
-//  KanbanCardBody — pure visual card, no DnD wiring.
-//  Used both by KanbanCard (with DnD) and by DragOverlay (ghost).
-// ─────────────────────────────────────────────────────────────
 
 interface KanbanCardBodyProps {
   ticket:        TicketWithProfiles

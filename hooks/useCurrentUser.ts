@@ -5,11 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { Profile } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  Fetch the current user's auth record + public profile.
-//  Uses browser Supabase client — safe in Client Components.
-//  Returns null when there is no active session.
-// ─────────────────────────────────────────────────────────────
 
 async function fetchCurrentUser(): Promise<Profile | null> {
   const supabase = createClient()

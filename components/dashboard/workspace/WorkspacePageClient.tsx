@@ -8,9 +8,6 @@ import { MobileNav } from '@/components/dashboard/layout/MobileNav'
 import { KanbanBoard } from '@/components/dashboard/kanban/KanbanBoard'
 import { Spinner } from '@/components/ui/spinner'
 
-// ─────────────────────────────────────────────────────────────
-//  WorkspacePageClient — org workspace with sidebar + board
-// ─────────────────────────────────────────────────────────────
 
 interface WorkspacePageClientProps {
   orgSlug: string

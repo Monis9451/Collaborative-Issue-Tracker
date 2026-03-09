@@ -3,22 +3,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Spinner } from '@/components/ui/spinner'
 
-/**
- * Full-page loading overlay.
- *
- * Two variants:
- *  - "overlay"  → fixed position, covers the entire viewport with a
- *                 semi-transparent backdrop. Used when navigating between
- *                 routes while the current page is still visible underneath.
- *  - "screen"   → full viewport replacement (no content behind it).
- *                 Used by Next.js loading.tsx files.
- *
- * Usage:
- *   <PageLoader />                  — full screen, no message
- *   <PageLoader message="Signing in…" />
- *   <PageLoader variant="overlay" />
- */
-
 interface PageLoaderProps {
   message?: string
   variant?: 'screen' | 'overlay'

@@ -5,11 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { queryKeys } from '@/lib/query/keys'
 import type { OrgMemberWithProfile } from '@/types/database'
 
-// ─────────────────────────────────────────────────────────────
-//  useOrgMembers
-//  Fetches all members of an org with their profile data.
-// ─────────────────────────────────────────────────────────────
-
 type RawMemberRow = {
   id:               string
   organization_id:  string

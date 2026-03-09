@@ -1,12 +1,6 @@
 import { type ReactNode } from 'react'
 import { clsx } from 'clsx'
 
-// ─────────────────────────────────────────────────────────────
-//  FormField — composes label + input slot + inline error message.
-//  Children should be a single Input (or Select/Textarea).
-//  error: when truthy, renders the error message below the input.
-// ─────────────────────────────────────────────────────────────
-
 interface FormFieldProps {
   label:      string
   htmlFor?:   string

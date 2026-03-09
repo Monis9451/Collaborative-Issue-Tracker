@@ -5,18 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// ─────────────────────────────────────────────────────────────
-//  Modal — generic accessible dialog overlay.
-//
-//  Props:
-//   open        — controlled open state
-//   onClose     — called when backdrop or ✕ is clicked
-//   title       — heading rendered inside the panel
-//   description — optional subtitle under the heading
-//   size        — panel width variant (default 'md')
-//   children    — form / content rendered inside
-// ─────────────────────────────────────────────────────────────
-
 interface ModalProps {
   open:         boolean
   onClose:      () => void

@@ -13,11 +13,6 @@ import { Button } from '@/components/ui/button'
 import { Alert } from '@/components/ui/Alert'
 import Link from 'next/link'
 
-// ─────────────────────────────────────────────────────────────
-//  LoginForm — react-hook-form + Zod + useSignIn mutation.
-//  Staggered field animation via framer-motion.
-//  Pill-shaped inputs for the split-card auth design.
-// ─────────────────────────────────────────────────────────────
 
 export function LoginForm() {
   const id       = useId()

@@ -6,12 +6,6 @@ import { signInWithEmail } from '@/lib/auth/actions'
 import { queryKeys } from '@/lib/query/keys'
 import type { LoginFormValues } from '@/types/auth'
 
-// ─────────────────────────────────────────────────────────────
-//  Sign-in mutation hook.
-//  On success: invalidates the user cache and navigates to /dashboard.
-//  On failure: mutation.error.message contains a user-friendly string.
-// ─────────────────────────────────────────────────────────────
-
 export function useSignIn() {
   const queryClient = useQueryClient()
   const router      = useRouter()

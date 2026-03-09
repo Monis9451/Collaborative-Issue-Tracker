@@ -2,10 +2,6 @@ import { type ReactNode } from 'react'
 import { clsx } from 'clsx'
 import { AlertCircle, CheckCircle2, Info, XCircle } from 'lucide-react'
 
-// ─────────────────────────────────────────────────────────────
-//  Alert — inline alert banner for error/success/info/warning states.
-//  Used inside forms to surface API-level errors and success messages.
-// ─────────────────────────────────────────────────────────────
 
 const alertConfig = {
   error: {
